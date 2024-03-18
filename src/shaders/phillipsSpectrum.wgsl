@@ -1,14 +1,14 @@
 const PI: f32 = 3.1415926;
 
-@group(0) @binding(1) var H0: texture_storage_2d<rgba32float, write>;
-@group(0) @binding(2) var Noise: texture_2d<f32>;
+@group(0) @binding(0) var H0: texture_storage_2d<rgba32float, write>;
+@group(0) @binding(1) var Noise: texture_2d<f32>;
 
 struct Params {
     textureSize: u32,
     tileScale: f32
 };
 
-@group(0) @binding(3) var<uniform> params: Params;
+@group(0) @binding(2) var<uniform> params: Params;
 
 fn phillipsSpectrum2D(k: vec2<f32>) -> f32 {
     if(length(k) < 0.0001) {

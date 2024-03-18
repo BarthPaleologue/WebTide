@@ -29,9 +29,9 @@ export class PhillipsSpectrum implements InitialSpectrum {
             { computeSource: spectrumWGSL },
             {
                 bindingsMapping: {
-                    H0: { group: 0, binding: 1 },
-                    Noise: { group: 0, binding: 2 },
-                    params: { group: 0, binding: 3 }
+                    H0: { group: 0, binding: 0 },
+                    Noise: { group: 0, binding: 1 },
+                    params: { group: 0, binding: 2 }
                 },
                 entryPoint: "computeSpectrum"
             }
