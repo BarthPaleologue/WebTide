@@ -6,11 +6,7 @@ import "@babylonjs/core/Loading/loadingScreen";
 
 import "../styles/index.scss";
 
-import { ArcRotateCamera, Constants, DirectionalLight, WebGPUEngine } from "@babylonjs/core";
-import { BaseSpectrum } from "./baseSpectrum";
-import { createStorageTexture } from "./utils";
-import { IFFT } from "./IFFT";
-import { DynamicSpectrum } from "./dynamicSpectrum";
+import { ArcRotateCamera, DirectionalLight, WebGPUEngine } from "@babylonjs/core";
 import { WaterMaterial } from "./waterMaterial";
 
 const canvas = document.getElementById("renderer") as HTMLCanvasElement;
@@ -30,18 +26,7 @@ const light = new DirectionalLight("light", new Vector3(1, -1, 0).normalize(), s
 const textureSize = 512;
 const tileScale = 1000;
 
-const baseSpectrum = new BaseSpectrum(textureSize, tileScale, engine);
-const dynamicSpectrum = new DynamicSpectrum(baseSpectrum, engine);
-
-const ifft = new IFFT(engine, textureSize);
-const heightBuffer = createStorageTexture("heightBuffer", engine, textureSize, textureSize, Constants.TEXTUREFORMAT_RG);
-const gradientBuffer = createStorageTexture("gradientBuffer", engine, textureSize, textureSize, Constants.TEXTUREFORMAT_RG);
-const displacementBuffer = createStorageTexture("displacementBuffer", engine, textureSize, textureSize, Constants.TEXTUREFORMAT_RG);
-
-const waterMaterial = new WaterMaterial("waterMaterial", scene);
-waterMaterial.setTexture("heightMap", heightBuffer);
-waterMaterial.setTexture("gradientMap", gradientBuffer);
-waterMaterial.setTexture("displacementMap", displacementBuffer);
+const waterMaterial = new WaterMaterial("waterMaterial", textureSize, tileScale, scene, engine);
 
 const water = MeshBuilder.CreateGround("water", {
     width: 10,
@@ -51,23 +36,9 @@ const water = MeshBuilder.CreateGround("water", {
 water.material = waterMaterial;
 water.position.y = -1;
 
-
-// starting at 0 can create visual artefacts
-let clock = 60 * 60;
-
 function updateScene() {
-    const deltaTime = engine.getDeltaTime() / 1000;
-    clock += deltaTime;
-
-    dynamicSpectrum.generate(clock);
-
-    ifft.applyToTexture(dynamicSpectrum.ht, heightBuffer);
-    ifft.applyToTexture(dynamicSpectrum.dht, gradientBuffer);
-    ifft.applyToTexture(dynamicSpectrum.displacement, displacementBuffer);
-
-    waterMaterial.setFloat("tileScale", tileScale);
-    waterMaterial.setVector3("cameraPositionW", camera.globalPosition);
-    waterMaterial.setVector3("lightDirection", light.direction);
+    const deltaSeconds = engine.getDeltaTime() / 1000;
+    waterMaterial.update(deltaSeconds, light.direction);
 }
 
 scene.executeWhenReady(() => {

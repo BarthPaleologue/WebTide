@@ -6,11 +6,8 @@ import "@babylonjs/core/Loading/loadingScreen";
 
 import "../styles/index.scss";
 
-import { ArcRotateCamera, Constants, DirectionalLight, WebGPUEngine } from "@babylonjs/core";
-import { BaseSpectrum } from "./baseSpectrum";
-import { createStorageTexture, createTexturedPlane } from "./utils";
-import { IFFT } from "./IFFT";
-import { DynamicSpectrum } from "./dynamicSpectrum";
+import { ArcRotateCamera, DirectionalLight, WebGPUEngine } from "@babylonjs/core";
+import { createTexturedPlane } from "./utils";
 import { WaterMaterial } from "./waterMaterial";
 import { SkyMaterial } from "@babylonjs/materials";
 
@@ -41,31 +38,18 @@ skyBox.material = sky;
 const textureSize = 512;
 const tileScale = 1000;
 
-const baseSpectrum = new BaseSpectrum(textureSize, tileScale, engine);
+const waterMaterial = new WaterMaterial("waterMaterial", textureSize, tileScale, scene, engine);
 
-createTexturedPlane(baseSpectrum.noise, scene);
+createTexturedPlane(waterMaterial.baseSpectrum.noise, scene);
 
-const h0k = createTexturedPlane(baseSpectrum.h0, scene);
+const h0k = createTexturedPlane(waterMaterial.baseSpectrum.h0, scene);
 h0k.position.x += 1;
 
-const dynamicSpectrum = new DynamicSpectrum(baseSpectrum, engine);
-
-const ht = createTexturedPlane(dynamicSpectrum.ht, scene);
+const ht = createTexturedPlane(waterMaterial.dynamicSpectrum.ht, scene);
 ht.position.z -= 1;
 
-const ifft = new IFFT(engine, textureSize);
-const heightBuffer = createStorageTexture("heightBuffer", engine, textureSize, textureSize, Constants.TEXTUREFORMAT_RG);
-const gradientBuffer = createStorageTexture("gradientBuffer", engine, textureSize, textureSize, Constants.TEXTUREFORMAT_RG);
-const displacementBuffer = createStorageTexture("displacementBuffer", engine, textureSize, textureSize, Constants.TEXTUREFORMAT_RG);
-
-const twiddle = createTexturedPlane(heightBuffer, scene);
+const twiddle = createTexturedPlane(waterMaterial.heightBuffer, scene);
 twiddle.position.x -= 1;
-
-
-const waterMaterial = new WaterMaterial("waterMaterial", scene);
-waterMaterial.setTexture("heightMap", heightBuffer);
-waterMaterial.setTexture("gradientMap", gradientBuffer);
-waterMaterial.setTexture("displacementMap", displacementBuffer);
 
 const radius = 2;
 const tileSize = 10;
@@ -79,22 +63,9 @@ for(let x = -radius; x <= radius; x++) {
     }
 }
 
-// starting at 0 can create visual artefacts
-let clock = 60 * 60;
-
 function updateScene() {
-    const deltaTime = engine.getDeltaTime() / 1000;
-    clock += deltaTime;
-
-    dynamicSpectrum.generate(clock);
-
-    ifft.applyToTexture(dynamicSpectrum.ht, heightBuffer);
-    ifft.applyToTexture(dynamicSpectrum.dht, gradientBuffer);
-    ifft.applyToTexture(dynamicSpectrum.displacement, displacementBuffer);
-
-    waterMaterial.setFloat("tileScale", tileScale);
-    waterMaterial.setVector3("cameraPositionW", camera.globalPosition);
-    waterMaterial.setVector3("lightDirection", light.direction);
+    const deltaSeconds = engine.getDeltaTime() / 1000;
+    waterMaterial.update(deltaSeconds, light.direction);
 }
 
 scene.executeWhenReady(() => {

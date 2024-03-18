@@ -1,11 +1,29 @@
-import { Effect, ShaderMaterial } from "@babylonjs/core";
+import { BaseTexture, Constants, Effect, ShaderMaterial, WebGPUEngine } from "@babylonjs/core";
 
 import fragment from "../shaders/waterMaterial/fragment.glsl";
 import vertex from "../shaders/waterMaterial/vertex.glsl";
 import { Scene } from "@babylonjs/core/scene";
+import { IFFT } from "./IFFT";
+import { createStorageTexture } from "./utils";
+import { BaseSpectrum } from "./baseSpectrum";
+import { DynamicSpectrum } from "./dynamicSpectrum";
+import { Vector3 } from "@babylonjs/core/Maths/math.vector";
 
 export class WaterMaterial extends ShaderMaterial {
-    constructor(name: string, scene: Scene) {
+    readonly textureSize: number;
+    readonly tileScale: number;
+
+    readonly baseSpectrum: BaseSpectrum;
+    readonly dynamicSpectrum: DynamicSpectrum;
+
+    readonly ifft: IFFT;
+    readonly heightBuffer: BaseTexture;
+    readonly gradientBuffer: BaseTexture;
+    readonly displacementBuffer: BaseTexture;
+
+    private elapsedSeconds = 3600;
+
+    constructor(name: string, textureSize: number, tileScale: number, scene: Scene, engine: WebGPUEngine) {
         if(Effect.ShadersStore["oceanVertexShader"] === undefined) {
             Effect.ShadersStore["oceanVertexShader"] = vertex;
         }
@@ -17,5 +35,36 @@ export class WaterMaterial extends ShaderMaterial {
             uniforms: ["world", "worldView", "worldViewProjection", "view", "projection", "cameraPositionW", "lightDirection", "tileScale"],
             samplers: ["heightMap", "gradientMap", "displacementMap"]
         });
+
+        this.textureSize = textureSize;
+        this.tileScale = tileScale;
+
+        this.baseSpectrum = new BaseSpectrum(textureSize, tileScale, engine);
+        this.dynamicSpectrum = new DynamicSpectrum(this.baseSpectrum, engine);
+
+        this.ifft = new IFFT(engine, textureSize);
+        this.heightBuffer = createStorageTexture("heightBuffer", engine, textureSize, textureSize, Constants.TEXTUREFORMAT_RG);
+        this.gradientBuffer = createStorageTexture("gradientBuffer", engine, textureSize, textureSize, Constants.TEXTUREFORMAT_RG);
+        this.displacementBuffer = createStorageTexture("displacementBuffer", engine, textureSize, textureSize, Constants.TEXTUREFORMAT_RG);
+
+        this.setTexture("heightMap", this.heightBuffer);
+        this.setTexture("gradientMap", this.gradientBuffer);
+        this.setTexture("displacementMap", this.displacementBuffer);
+    }
+
+    public update(deltaSeconds: number, lightDirection: Vector3) {
+        this.elapsedSeconds += deltaSeconds;
+        this.dynamicSpectrum.generate(this.elapsedSeconds);
+
+        this.ifft.applyToTexture(this.dynamicSpectrum.ht, this.heightBuffer);
+        this.ifft.applyToTexture(this.dynamicSpectrum.dht, this.gradientBuffer);
+        this.ifft.applyToTexture(this.dynamicSpectrum.displacement, this.displacementBuffer);
+
+        const activeCamera = this.getScene().activeCamera;
+        if(activeCamera === null) throw new Error("No active camera found");
+        this.setVector3("cameraPositionW", activeCamera.globalPosition);
+
+        this.setFloat("tileScale", this.tileScale);
+        this.setVector3("lightDirection", lightDirection);
     }
 }
