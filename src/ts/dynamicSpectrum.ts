@@ -27,7 +27,7 @@ export class DynamicSpectrum {
             entryPoint: "computeSpectrum"
         });
 
-        this.ht = createStorageTexture("ht", engine, baseSpectrum.textureSize, baseSpectrum.textureSize, Constants.TEXTUREFORMAT_RGBA);
+        this.ht = createStorageTexture("ht", engine, baseSpectrum.textureSize, baseSpectrum.textureSize, Constants.TEXTUREFORMAT_RG);
 
         this.settings = new UniformBuffer(engine);
 

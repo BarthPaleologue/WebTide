@@ -44,10 +44,8 @@ const ht = createTexturedPlane(dynamicSpectrum.ht, scene);
 ht.position.z -= 1;
 
 const ifft = new IFFT(engine, textureSize);
-
 const buffer = createStorageTexture("buffer", engine, textureSize, textureSize, Constants.TEXTUREFORMAT_RG);
 
-ifft.applyToTexture(baseSpectrum.h0k, buffer);
 const twiddle = createTexturedPlane(buffer, scene);
 twiddle.position.x -= 1;
 
@@ -55,7 +53,7 @@ const water = MeshBuilder.CreateGround("water", { width: 10, height: 10, subdivi
 
 const waterMaterial = new StandardMaterial("waterMaterial", scene);
 waterMaterial.diffuseTexture = buffer;
-waterMaterial.wireframe = true;
+//waterMaterial.wireframe = true;
 
 water.material = waterMaterial;
 water.position.y = -1;
@@ -67,6 +65,8 @@ function updateScene() {
     clock += deltaTime;
 
     dynamicSpectrum.generate(clock);
+
+    ifft.applyToTexture(dynamicSpectrum.ht, buffer);
 }
 
 scene.executeWhenReady(() => {

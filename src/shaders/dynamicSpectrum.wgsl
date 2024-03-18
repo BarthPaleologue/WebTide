@@ -1,7 +1,7 @@
 const PI : f32 = 3.1415926;
 
 @group(0) @binding(0) var H0: texture_2d<f32>;
-@group(0) @binding(1) var HT: texture_storage_2d<rgba32float, write>;
+@group(0) @binding(1) var HT: texture_storage_2d<rg32float, write>;
 
 struct Params {
     Size: u32,
