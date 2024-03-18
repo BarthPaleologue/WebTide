@@ -20,6 +20,10 @@ const engine = new WebGPUEngine(canvas);
 engine.loadingScreen.displayLoadingUI();
 await engine.initAsync();
 
+if (!await WebGPUEngine.IsSupportedAsync) {
+    engine.loadingScreen.loadingUIText = "WebGPU is not supported in your browser. Please check the compatibility here: https://github.com/gpuweb/gpuweb/wiki/Implementation-Status#implementation-status";
+}
+
 const scene = new Scene(engine);
 
 const camera = new ArcRotateCamera("camera", 3.14 / 3, 3.14 / 3, 5, new Vector3(0, 0.8, 0), scene);
@@ -48,7 +52,11 @@ const radius = 2;
 const tileSize = 10;
 for (let x = -radius; x <= radius; x++) {
     for (let z = -radius; z <= radius; z++) {
-        const water = MeshBuilder.CreateGround("water", { width: tileSize, height: tileSize, subdivisions: textureSize }, scene);
+        const water = MeshBuilder.CreateGround("water", {
+            width: tileSize,
+            height: tileSize,
+            subdivisions: textureSize
+        }, scene);
         water.material = waterMaterial;
         water.position.x = x * tileSize;
         water.position.z = z * tileSize;
