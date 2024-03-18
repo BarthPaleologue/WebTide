@@ -3,7 +3,6 @@ import vertex from "../shaders/waterMaterial/vertex.glsl";
 import { Scene } from "@babylonjs/core/scene";
 import { IFFT } from "./IFFT";
 import { createStorageTexture } from "./utils";
-import { PhillipsSpectrum } from "./phillipsSpectrum";
 import { DynamicSpectrum } from "./dynamicSpectrum";
 import { Vector3 } from "@babylonjs/core/Maths/math.vector";
 import { ShaderMaterial } from "@babylonjs/core/Materials/shaderMaterial";
@@ -27,7 +26,7 @@ export class WaterMaterial extends ShaderMaterial {
 
     private elapsedSeconds = 3600;
 
-    constructor(name: string, textureSize: number, tileScale: number, scene: Scene, engine: WebGPUEngine, baseSpectrum: InitialSpectrum = new PhillipsSpectrum(textureSize, tileScale, engine)) {
+    constructor(name: string, initialSpectrum: InitialSpectrum, scene: Scene, engine: WebGPUEngine) {
         if (Effect.ShadersStore["oceanVertexShader"] === undefined) {
             Effect.ShadersStore["oceanVertexShader"] = vertex;
         }
@@ -40,20 +39,20 @@ export class WaterMaterial extends ShaderMaterial {
             samplers: ["heightMap", "gradientMap", "displacementMap"]
         });
 
-        this.textureSize = textureSize;
-        this.tileScale = tileScale;
-
-        if(baseSpectrum.h0.textureFormat != Constants.TEXTUREFORMAT_RGBA) {
+        if(initialSpectrum.h0.textureFormat != Constants.TEXTUREFORMAT_RGBA) {
             throw new Error("The base spectrum must have a texture format of RGBA");
         }
 
-        this.initialSpectrum = baseSpectrum;
+        this.textureSize = initialSpectrum.textureSize;
+        this.tileScale = initialSpectrum.tileScale;
+
+        this.initialSpectrum = initialSpectrum;
         this.dynamicSpectrum = new DynamicSpectrum(this.initialSpectrum, engine);
 
-        this.ifft = new IFFT(engine, textureSize);
-        this.heightMap = createStorageTexture("heightBuffer", engine, textureSize, textureSize, Constants.TEXTUREFORMAT_RG);
-        this.gradientMap = createStorageTexture("gradientBuffer", engine, textureSize, textureSize, Constants.TEXTUREFORMAT_RG);
-        this.displacementMap = createStorageTexture("displacementBuffer", engine, textureSize, textureSize, Constants.TEXTUREFORMAT_RG);
+        this.ifft = new IFFT(engine, this.textureSize);
+        this.heightMap = createStorageTexture("heightBuffer", engine, this.textureSize, this.textureSize, Constants.TEXTUREFORMAT_RG);
+        this.gradientMap = createStorageTexture("gradientBuffer", engine, this.textureSize, this.textureSize, Constants.TEXTUREFORMAT_RG);
+        this.displacementMap = createStorageTexture("displacementBuffer", engine, this.textureSize, this.textureSize, Constants.TEXTUREFORMAT_RG);
 
         this.setTexture("heightMap", this.heightMap);
         this.setTexture("gradientMap", this.gradientMap);

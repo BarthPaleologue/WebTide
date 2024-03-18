@@ -10,6 +10,7 @@ import { ArcRotateCamera } from "@babylonjs/core/Cameras/arcRotateCamera";
 import { DirectionalLight } from "@babylonjs/core/Lights/directionalLight";
 
 import { WaterMaterial } from "./waterMaterial";
+import { PhillipsSpectrum } from "./phillipsSpectrum";
 
 const canvas = document.getElementById("renderer") as HTMLCanvasElement;
 canvas.width = window.innerWidth;
@@ -40,7 +41,8 @@ skyBox.material = sky;
 const textureSize = 512;
 const tileScale = 1000;
 
-const waterMaterial = new WaterMaterial("waterMaterial", textureSize, tileScale, scene, engine);
+const initialSpectrum = new PhillipsSpectrum(textureSize, tileScale, engine);
+const waterMaterial = new WaterMaterial("waterMaterial", initialSpectrum, scene, engine);
 
 const radius = 2;
 const tileSize = 10;
