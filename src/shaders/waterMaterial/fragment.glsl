@@ -25,7 +25,7 @@ void main() {
     vec3 viewRayReflectedW = reflect(viewRayW, vNormalW);
 
     float fresnel = fractionReflected(dot(viewRayW, vNormalW), dot(viewRayRefractedW, vNormalW), 1.0, 1.33);
-    fresnel /= 5.0;
+    fresnel /= 2.0;
 
     vec3 reflectedColor = vec3(30.0, 76.0, 126.0) / 255.0;
 
