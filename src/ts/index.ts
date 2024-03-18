@@ -13,9 +13,10 @@ import "@babylonjs/core/Loading/loadingScreen";
 import "../styles/index.scss";
 
 import postprocessCode from "../shaders/smallPostProcess.glsl";
-import { ArcRotateCamera, WebGPUEngine } from "@babylonjs/core";
+import { ArcRotateCamera, Constants, HemisphericLight, WebGPUEngine } from "@babylonjs/core";
 import { BaseSpectrum } from "./baseSpectrum";
-import { createTexturedPlane } from "./utils";
+import { createStorageTexture, createTexturedPlane } from "./utils";
+import { IFFT } from "./IFFT";
 
 const canvas = document.getElementById("renderer") as HTMLCanvasElement;
 canvas.width = window.innerWidth;
@@ -30,18 +31,25 @@ const camera = new ArcRotateCamera("camera", 3.14 / 3, 3.14 / 3, 5, Vector3.Zero
 camera.wheelPrecision = 100;
 camera.attachControl();
 
-const light = new PointLight("light", new Vector3(-5, 5, 10), scene);
+const light = new HemisphericLight("light", new Vector3(0, 1, 0), scene);
 
-const sphere = MeshBuilder.CreateSphere("sphere", { segments: 32, diameter: 1 }, scene);
-sphere.position = new Vector3(0, 0, 10);
+const textureSize = 256;
 
-const baseSpectrum = new BaseSpectrum(256, engine);
+const baseSpectrum = new BaseSpectrum(textureSize, engine);
 baseSpectrum.generate();
 
 createTexturedPlane(baseSpectrum.noise, scene);
 
 const h0k = createTexturedPlane(baseSpectrum.h0k, scene);
 h0k.position.x += 1;
+
+const ifft = new IFFT(engine, textureSize);
+
+const buffer = createStorageTexture("buffer", engine, textureSize, textureSize, Constants.TEXTUREFORMAT_RG);
+
+ifft.applyToTexture(baseSpectrum.h0k, buffer);
+const twiddle = createTexturedPlane(buffer, scene);
+twiddle.position.x -= 1;
 
 //Effect.ShadersStore[`PostProcess1FragmentShader`] = postprocessCode;
 //const postProcess = new PostProcess("postProcess1", "PostProcess1", [], ["textureSampler"], 1, camera, Texture.BILINEAR_SAMPLINGMODE, engine);
@@ -51,9 +59,6 @@ let clock = 0;
 function updateScene() {
     const deltaTime = engine.getDeltaTime() / 1000;
     clock += deltaTime;
-
-    sphere.position.x = Math.cos(clock);
-    sphere.position.z = 5 + Math.sin(clock);
 }
 
 scene.executeWhenReady(() => {
