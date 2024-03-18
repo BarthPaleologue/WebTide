@@ -1,29 +1,13 @@
-import { BaseTexture, Constants, Mesh, Nullable, RawTexture, StandardMaterial, ThinEngine } from "@babylonjs/core";
+import { BaseTexture, Constants, Mesh, RawTexture, StandardMaterial, ThinEngine } from "@babylonjs/core";
 import { Texture } from "@babylonjs/core/Materials/Textures/texture";
 import { Scene } from "@babylonjs/core/scene";
 import { MeshBuilder } from "@babylonjs/core/Meshes/meshBuilder";
 
-export function createStorageTexture(name: string, engine: ThinEngine, nwidth: number, nheight: number, textureFormat = Constants.TEXTUREFORMAT_RGBA, textureType = Constants.TEXTURETYPE_FLOAT,
-    filterMode = Constants.TEXTURE_NEAREST_SAMPLINGMODE, generateMipMaps = false, wrapMode = Constants.TEXTURE_WRAP_ADDRESSMODE, texture: Nullable<Texture> = null): Texture
-{
-    const { width, height } = texture ? texture.getSize() : { width: 0, height: 0 };
-    let type = texture ? (texture.getInternalTexture()!.type ?? -1) : -2;
-    let format = texture ? (texture.getInternalTexture()!.format ?? -1) : -2;
-    if (type === -1) {
-        type = Constants.TEXTURETYPE_UNSIGNED_BYTE;
-    }
-    if (format === -1) {
-        format = Constants.TEXTUREFORMAT_RGBA;
-    }
-    if (!texture || width !== nwidth || height !== nheight || textureType !== type || textureFormat !== format) {
-        /*texture = new RenderTargetTexture(name, { width: nwidth, height: nheight }, scene, false, undefined, textureType, false, filterMode, false, false, false,
-            textureFormat, false, undefined, Constants.TEXTURE_CREATIONFLAG_STORAGE);*/
-        texture = new RawTexture(null, nwidth, nheight, textureFormat, engine, generateMipMaps, false, filterMode, textureType, Constants.TEXTURE_CREATIONFLAG_STORAGE);
-        texture.name = name;
-    }
-    texture.wrapU = wrapMode;
-    texture.wrapV = wrapMode;
-    texture.updateSamplingMode(filterMode);
+export function createStorageTexture(name: string, engine: ThinEngine, width: number, height: number, textureFormat: number): Texture {
+    const texture = new RawTexture(null, width, height, textureFormat, engine, false, false, Constants.TEXTURE_NEAREST_SAMPLINGMODE, Constants.TEXTURETYPE_FLOAT, Constants.TEXTURE_CREATIONFLAG_STORAGE);
+    texture.name = name;
+    texture.wrapU = Constants.TEXTURE_WRAP_ADDRESSMODE;
+    texture.wrapV = Constants.TEXTURE_WRAP_ADDRESSMODE;
 
     return texture;
 }
