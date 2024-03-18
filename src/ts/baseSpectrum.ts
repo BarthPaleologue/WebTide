@@ -1,6 +1,6 @@
 import { ComputeShader, Constants, UniformBuffer, WebGPUEngine } from "@babylonjs/core";
 
-import spectrumWGSL from "../shaders/spectrum.wgsl";
+import spectrumWGSL from "../shaders/baseSpectrum.wgsl";
 import { createGaussianRandomTexture, createStorageTexture } from "./utils";
 import { Texture } from "@babylonjs/core/Materials/Textures/texture";
 
