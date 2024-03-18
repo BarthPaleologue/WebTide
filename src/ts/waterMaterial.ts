@@ -14,7 +14,7 @@ export class WaterMaterial extends ShaderMaterial {
         }
         super(name, scene, "water", {
             attributes: ["position", "normal", "uv"],
-            uniforms: ["world", "worldView", "worldViewProjection", "view", "projection"],
+            uniforms: ["world", "worldView", "worldViewProjection", "view", "projection", "cameraPositionW"],
             samplers: ["heightMap"]
         });
     }

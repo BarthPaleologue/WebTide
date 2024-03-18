@@ -50,17 +50,20 @@ const buffer = createStorageTexture("buffer", engine, textureSize, textureSize, 
 const twiddle = createTexturedPlane(buffer, scene);
 twiddle.position.x -= 1;
 
-const water = MeshBuilder.CreateGround("water", { width: 10, height: 10, subdivisions: textureSize }, scene);
 
 const waterMaterial = new WaterMaterial("waterMaterial", scene);
 
-/*waterMaterial.onBindObservable.add(() => {
-    waterMaterial.setTexture("heightMap", buffer);
-});*/
-//waterMaterial.wireframe = true;
-
-water.material = waterMaterial;
-water.position.y = -1;
+const radius = 1;
+const tileSize = 20;
+for(let x = -radius; x <= radius; x++) {
+    for(let z = -radius; z <= radius; z++) {
+        const water = MeshBuilder.CreateGround("water", { width: tileSize, height: tileSize, subdivisions: textureSize }, scene);
+        water.material = waterMaterial;
+        water.position.x = x * tileSize;
+        water.position.z = z * tileSize;
+        water.position.y = -1;
+    }
+}
 
 let clock = 0;
 
@@ -74,6 +77,7 @@ function updateScene() {
 
 
     waterMaterial.setTexture("heightMap", buffer);
+    waterMaterial.setVector3("cameraPositionW", camera.globalPosition);
 }
 
 scene.executeWhenReady(() => {
