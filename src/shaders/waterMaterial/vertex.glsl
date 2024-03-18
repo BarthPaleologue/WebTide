@@ -23,7 +23,6 @@ const float scalingFactor = 1e-5;
 vec3 sampleHeightAndGradient(vec2 point) {
     float height = texture(heightMap, point).r;
     vec2 gradient = texture(gradientMap, point).rg;
-    gradient *= tileScale;
     vec3 heightAndGradient = vec3(height, gradient);
 
     return heightAndGradient * scalingFactor * 0.8;
