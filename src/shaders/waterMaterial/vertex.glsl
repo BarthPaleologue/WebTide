@@ -15,7 +15,7 @@ varying vec3 vPosition;
 varying vec3 vPositionW;
 
 float sampleHeight(vec2 point) {
-    return texture(heightMap, point).r / 20000.0;
+    return texture(heightMap, point).r / 40000.0;
 }
 
 void main(void) {

@@ -27,7 +27,7 @@ const camera = new ArcRotateCamera("camera", 3.14 / 3, 3.14 / 3, 5, Vector3.Zero
 camera.wheelPrecision = 100;
 camera.attachControl();
 
-const light = new DirectionalLight("light", new Vector3(1, -1, 0).normalize(), scene);
+const light = new DirectionalLight("light", new Vector3(3, -1, 0).normalize(), scene);
 
 const sky = new SkyMaterial("sky", scene);
 sky.backFaceCulling = false;
@@ -37,7 +37,7 @@ sky.useSunPosition = true;
 const skyBox = MeshBuilder.CreateBox("skyBox", { size: 1000 }, scene);
 skyBox.material = sky;
 
-const textureSize = 256;
+const textureSize = 512;
 
 const baseSpectrum = new BaseSpectrum(textureSize, engine);
 baseSpectrum.generate();
@@ -62,7 +62,7 @@ twiddle.position.x -= 1;
 const waterMaterial = new WaterMaterial("waterMaterial", scene);
 
 const radius = 1;
-const tileSize = 20;
+const tileSize = 10;
 for(let x = -radius; x <= radius; x++) {
     for(let z = -radius; z <= radius; z++) {
         const water = MeshBuilder.CreateGround("water", { width: tileSize, height: tileSize, subdivisions: textureSize }, scene);
