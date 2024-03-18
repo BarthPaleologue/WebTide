@@ -9,7 +9,6 @@ uniform mat4 worldViewProjection;
 
 uniform sampler2D heightMap;
 
-varying vec3 vNormal;
 varying vec3 vNormalW;
 varying vec2 vUV;
 varying vec3 vPosition;
@@ -31,7 +30,6 @@ void main(void) {
 
     vPosition = waterPosition;
     vPositionW = vec3(world * vec4(waterPosition, 1.0));
-    vNormal = normal;
     vNormalW = vec3(world * vec4(normal, 0.0));
     vUV = uv;
     gl_Position = worldViewProjection * vec4(waterPosition, 1.0);

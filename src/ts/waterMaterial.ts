@@ -6,15 +6,15 @@ import { Scene } from "@babylonjs/core/scene";
 
 export class WaterMaterial extends ShaderMaterial {
     constructor(name: string, scene: Scene) {
-        if(Effect.ShadersStore["waterVertexShader"] === undefined) {
-            Effect.ShadersStore["waterVertexShader"] = vertex;
+        if(Effect.ShadersStore["oceanVertexShader"] === undefined) {
+            Effect.ShadersStore["oceanVertexShader"] = vertex;
         }
-        if(Effect.ShadersStore["waterFragmentShader"] === undefined) {
-            Effect.ShadersStore["waterFragmentShader"] = fragment;
+        if(Effect.ShadersStore["oceanFragmentShader"] === undefined) {
+            Effect.ShadersStore["oceanFragmentShader"] = fragment;
         }
-        super(name, scene, "water", {
+        super(name, scene, "ocean", {
             attributes: ["position", "normal", "uv"],
-            uniforms: ["world", "worldView", "worldViewProjection", "view", "projection", "cameraPositionW"],
+            uniforms: ["world", "worldView", "worldViewProjection", "view", "projection", "cameraPositionW", "lightDirection"],
             samplers: ["heightMap"]
         });
     }

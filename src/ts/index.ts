@@ -6,13 +6,13 @@ import "@babylonjs/core/Loading/loadingScreen";
 
 import "../styles/index.scss";
 
-import postprocessCode from "../shaders/smallPostProcess.glsl";
-import { ArcRotateCamera, Constants, HemisphericLight, Mesh, StandardMaterial, WebGPUEngine } from "@babylonjs/core";
+import { ArcRotateCamera, Constants, DirectionalLight, WebGPUEngine } from "@babylonjs/core";
 import { BaseSpectrum } from "./baseSpectrum";
 import { createStorageTexture, createTexturedPlane } from "./utils";
 import { IFFT } from "./IFFT";
 import { DynamicSpectrum } from "./dynamicSpectrum";
 import { WaterMaterial } from "./waterMaterial";
+import { SkyMaterial } from "@babylonjs/materials";
 
 const canvas = document.getElementById("renderer") as HTMLCanvasElement;
 canvas.width = window.innerWidth;
@@ -27,7 +27,15 @@ const camera = new ArcRotateCamera("camera", 3.14 / 3, 3.14 / 3, 5, Vector3.Zero
 camera.wheelPrecision = 100;
 camera.attachControl();
 
-const light = new HemisphericLight("light", new Vector3(0, 1, 0), scene);
+const light = new DirectionalLight("light", new Vector3(1, -1, 0).normalize(), scene);
+
+const sky = new SkyMaterial("sky", scene);
+sky.backFaceCulling = false;
+sky.sunPosition = light.direction.negate();
+sky.useSunPosition = true;
+
+const skyBox = MeshBuilder.CreateBox("skyBox", { size: 1000 }, scene);
+skyBox.material = sky;
 
 const textureSize = 256;
 
@@ -78,6 +86,7 @@ function updateScene() {
 
     waterMaterial.setTexture("heightMap", buffer);
     waterMaterial.setVector3("cameraPositionW", camera.globalPosition);
+    waterMaterial.setVector3("lightDirection", light.direction);
 }
 
 scene.executeWhenReady(() => {

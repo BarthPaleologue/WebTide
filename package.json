@@ -1,6 +1,7 @@
 {
   "devDependencies": {
-    "@babylonjs/core": "^6.45.1",
+    "@babylonjs/core": "^6.47.0",
+    "@babylonjs/materials": "^6.47.0",
     "@typescript-eslint/eslint-plugin": "^5.62.0",
     "@typescript-eslint/parser": "^5.62.0",
     "@webpack-cli/generators": "^3.0.7",
@@ -12,7 +13,7 @@
     "mini-css-extract-plugin": "^2.8.1",
     "prettier": "^2.8.8",
     "raw-loader": "^4.0.2",
-    "sass": "^1.71.1",
+    "sass": "^1.72.0",
     "sass-loader": "^13.3.3",
     "style-loader": "^3.3.4",
     "ts-loader": "^9.5.1",
