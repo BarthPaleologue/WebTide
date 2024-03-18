@@ -18,19 +18,21 @@ varying vec2 vUV;
 varying vec3 vPosition;
 varying vec3 vPositionW;
 
+const float scalingFactor = 1e-5;
+
 vec3 sampleHeightAndGradient(vec2 point) {
     float height = texture(heightMap, point).r;
     vec2 gradient = texture(gradientMap, point).rg;
     gradient *= tileScale;
     vec3 heightAndGradient = vec3(height, gradient);
 
-    return heightAndGradient / 100000.0;
+    return heightAndGradient * scalingFactor * 0.8;
 }
 
 void main(void) {
     vec3 waterPosition = position;
 
-    vec2 displacement = texture(displacementMap, uv).rg / 100000.0;
+    vec2 displacement = texture(displacementMap, uv).rg * scalingFactor;
     waterPosition.x += displacement.x;
     waterPosition.z += displacement.y;
 
