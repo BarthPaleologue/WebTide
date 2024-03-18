@@ -27,6 +27,7 @@ await engine.initAsync();
 const scene = new Scene(engine);
 
 const camera = new ArcRotateCamera("camera", 3.14 / 3, 3.14 / 3, 5, Vector3.Zero(), scene);
+camera.wheelPrecision = 100;
 camera.attachControl();
 
 const light = new PointLight("light", new Vector3(-5, 5, 10), scene);
@@ -39,8 +40,8 @@ baseSpectrum.generate();
 
 createTexturedPlane(baseSpectrum.noise, scene);
 
-const h0 = createTexturedPlane(baseSpectrum.h0, scene);
-h0.position.x += 1;
+const h0k = createTexturedPlane(baseSpectrum.h0k, scene);
+h0k.position.x += 1;
 
 //Effect.ShadersStore[`PostProcess1FragmentShader`] = postprocessCode;
 //const postProcess = new PostProcess("postProcess1", "PostProcess1", [], ["textureSampler"], 1, camera, Texture.BILINEAR_SAMPLINGMODE, engine);

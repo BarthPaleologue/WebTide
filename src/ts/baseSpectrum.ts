@@ -14,7 +14,7 @@ export class BaseSpectrum {
     private readonly settings: UniformBuffer;
 
     private readonly textureSize;
-    private readonly lengthScale = 1;
+    private readonly lengthScale = 500;
 
     constructor(textureSize: number, engine: WebGPUEngine) {
         this.textureSize = textureSize;
