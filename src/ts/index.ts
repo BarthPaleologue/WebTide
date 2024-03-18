@@ -12,6 +12,7 @@ import { BaseSpectrum } from "./baseSpectrum";
 import { createStorageTexture, createTexturedPlane } from "./utils";
 import { IFFT } from "./IFFT";
 import { DynamicSpectrum } from "./dynamicSpectrum";
+import { WaterMaterial } from "./waterMaterial";
 
 const canvas = document.getElementById("renderer") as HTMLCanvasElement;
 canvas.width = window.innerWidth;
@@ -51,8 +52,11 @@ twiddle.position.x -= 1;
 
 const water = MeshBuilder.CreateGround("water", { width: 10, height: 10, subdivisions: textureSize }, scene);
 
-const waterMaterial = new StandardMaterial("waterMaterial", scene);
-waterMaterial.diffuseTexture = buffer;
+const waterMaterial = new WaterMaterial("waterMaterial", scene);
+
+/*waterMaterial.onBindObservable.add(() => {
+    waterMaterial.setTexture("heightMap", buffer);
+});*/
 //waterMaterial.wireframe = true;
 
 water.material = waterMaterial;
@@ -67,6 +71,9 @@ function updateScene() {
     dynamicSpectrum.generate(clock);
 
     ifft.applyToTexture(dynamicSpectrum.ht, buffer);
+
+
+    waterMaterial.setTexture("heightMap", buffer);
 }
 
 scene.executeWhenReady(() => {
