@@ -1,22 +1,17 @@
-import { Engine } from "@babylonjs/core/Engines/engine";
 import { Scene } from "@babylonjs/core/scene";
-import { FreeCamera } from "@babylonjs/core/Cameras/freeCamera";
 import { Vector3 } from "@babylonjs/core/Maths/math.vector";
 import { MeshBuilder } from "@babylonjs/core/Meshes/meshBuilder";
-import { Effect } from "@babylonjs/core/Materials/effect";
-import { PostProcess } from "@babylonjs/core/PostProcesses/postProcess";
-import { Texture } from "@babylonjs/core/Materials/Textures/texture";
-import { PointLight } from "@babylonjs/core/Lights/pointLight";
 import "@babylonjs/core/Materials/standardMaterial";
 import "@babylonjs/core/Loading/loadingScreen";
 
 import "../styles/index.scss";
 
 import postprocessCode from "../shaders/smallPostProcess.glsl";
-import { ArcRotateCamera, Constants, HemisphericLight, WebGPUEngine } from "@babylonjs/core";
+import { ArcRotateCamera, Constants, HemisphericLight, Mesh, StandardMaterial, WebGPUEngine } from "@babylonjs/core";
 import { BaseSpectrum } from "./baseSpectrum";
 import { createStorageTexture, createTexturedPlane } from "./utils";
 import { IFFT } from "./IFFT";
+import { DynamicSpectrum } from "./dynamicSpectrum";
 
 const canvas = document.getElementById("renderer") as HTMLCanvasElement;
 canvas.width = window.innerWidth;
@@ -40,8 +35,13 @@ baseSpectrum.generate();
 
 createTexturedPlane(baseSpectrum.noise, scene);
 
-const h0k = createTexturedPlane(baseSpectrum.h0k, scene);
+const h0k = createTexturedPlane(baseSpectrum.h0, scene);
 h0k.position.x += 1;
+
+const dynamicSpectrum = new DynamicSpectrum(baseSpectrum, engine);
+
+const ht = createTexturedPlane(dynamicSpectrum.ht, scene);
+ht.position.z -= 1;
 
 const ifft = new IFFT(engine, textureSize);
 
@@ -51,14 +51,22 @@ ifft.applyToTexture(baseSpectrum.h0k, buffer);
 const twiddle = createTexturedPlane(buffer, scene);
 twiddle.position.x -= 1;
 
-//Effect.ShadersStore[`PostProcess1FragmentShader`] = postprocessCode;
-//const postProcess = new PostProcess("postProcess1", "PostProcess1", [], ["textureSampler"], 1, camera, Texture.BILINEAR_SAMPLINGMODE, engine);
+const water = MeshBuilder.CreateGround("water", { width: 10, height: 10, subdivisions: textureSize }, scene);
+
+const waterMaterial = new StandardMaterial("waterMaterial", scene);
+waterMaterial.diffuseTexture = buffer;
+waterMaterial.wireframe = true;
+
+water.material = waterMaterial;
+water.position.y = -1;
 
 let clock = 0;
 
 function updateScene() {
     const deltaTime = engine.getDeltaTime() / 1000;
     clock += deltaTime;
+
+    dynamicSpectrum.generate(clock);
 }
 
 scene.executeWhenReady(() => {
