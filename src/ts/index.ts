@@ -38,9 +38,9 @@ const skyBox = MeshBuilder.CreateBox("skyBox", { size: 1000 }, scene);
 skyBox.material = sky;
 
 const textureSize = 512;
-const lengthScale = 1000;
+const tileScale = 1000;
 
-const baseSpectrum = new BaseSpectrum(textureSize, lengthScale, engine);
+const baseSpectrum = new BaseSpectrum(textureSize, tileScale, engine);
 baseSpectrum.generate();
 
 createTexturedPlane(baseSpectrum.noise, scene);
@@ -62,6 +62,8 @@ twiddle.position.x -= 1;
 
 
 const waterMaterial = new WaterMaterial("waterMaterial", scene);
+waterMaterial.setTexture("heightMap", heightBuffer);
+waterMaterial.setTexture("gradientMap", gradientBuffer);
 
 const radius = 1;
 const tileSize = 10;
@@ -75,7 +77,8 @@ for(let x = -radius; x <= radius; x++) {
     }
 }
 
-let clock = 0;
+// starting at 0 can create visual artefacts
+let clock = 60 * 60;
 
 function updateScene() {
     const deltaTime = engine.getDeltaTime() / 1000;
@@ -86,9 +89,7 @@ function updateScene() {
     ifft.applyToTexture(dynamicSpectrum.ht, heightBuffer);
     ifft.applyToTexture(dynamicSpectrum.dht, gradientBuffer);
 
-    waterMaterial.setTexture("heightMap", heightBuffer);
-    waterMaterial.setTexture("gradientMap", gradientBuffer);
-    waterMaterial.setFloat("lengthScale", lengthScale);
+    waterMaterial.setFloat("tileScale", tileScale);
     waterMaterial.setVector3("cameraPositionW", camera.globalPosition);
     waterMaterial.setVector3("lightDirection", light.direction);
 }

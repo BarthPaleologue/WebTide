@@ -10,7 +10,7 @@ uniform mat4 worldViewProjection;
 uniform sampler2D heightMap;
 uniform sampler2D gradientMap;
 
-uniform float lengthScale;
+uniform float tileScale;
 
 varying vec3 vNormalW;
 varying vec2 vUV;
@@ -24,7 +24,7 @@ float sampleHeight(vec2 point) {
 vec3 sampleHeightAndGradient(vec2 point) {
     float height = texture(heightMap, point).r;
     vec2 gradient = texture(gradientMap, point).rg;
-    gradient *= lengthScale;
+    gradient *= tileScale;
     vec3 heightAndGradient = vec3(height, gradient);
 
     return heightAndGradient / 100000.0;

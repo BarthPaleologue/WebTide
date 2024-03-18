@@ -35,7 +35,7 @@ export class DynamicSpectrum {
         this.settings = new UniformBuffer(engine);
 
         this.settings.addUniform("Size", 1);
-        this.settings.addUniform("LengthScale", 1);
+        this.settings.addUniform("tileScale", 1);
         this.settings.addUniform("ElapsedSeconds", 1);
 
         this.computeShader.setStorageTexture("H0", this.baseSpectrum.h0);
@@ -46,7 +46,7 @@ export class DynamicSpectrum {
 
     generate(elapsedSeconds: number) {
         this.settings.updateInt("Size", this.baseSpectrum.textureSize);
-        this.settings.updateFloat("LengthScale", this.baseSpectrum.lengthScale);
+        this.settings.updateFloat("tileScale", this.baseSpectrum.tileScale);
         this.settings.updateFloat("ElapsedSeconds", elapsedSeconds);
 
         this.settings.update();

@@ -14,11 +14,11 @@ export class BaseSpectrum {
     private readonly settings: UniformBuffer;
 
     readonly textureSize;
-    readonly lengthScale;
+    readonly tileScale;
 
-    constructor(textureSize: number, lengthScale: number, engine: WebGPUEngine) {
+    constructor(textureSize: number, tileScale: number, engine: WebGPUEngine) {
         this.textureSize = textureSize;
-        this.lengthScale = lengthScale;
+        this.tileScale = tileScale;
 
         this.computeShader = new ComputeShader("computeSpectrum", engine, { computeSource: spectrumWGSL }, {
             bindingsMapping: {
@@ -37,7 +37,7 @@ export class BaseSpectrum {
         this.settings = new UniformBuffer(engine);
 
         this.settings.addUniform("Size", 1);
-        this.settings.addUniform("LengthScale", 1);
+        this.settings.addUniform("tileScale", 1);
 
         this.computeShader.setStorageTexture("H0K", this.h0k);
         this.computeShader.setStorageTexture("H0", this.h0);
@@ -47,7 +47,7 @@ export class BaseSpectrum {
 
     generate() {
         this.settings.updateInt("Size", this.textureSize);
-        this.settings.updateFloat("LengthScale", this.lengthScale);
+        this.settings.updateFloat("tileScale", this.tileScale);
 
         this.settings.update();
 
