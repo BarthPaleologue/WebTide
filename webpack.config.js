@@ -11,6 +11,7 @@ const config = {
 
     entry: {
         index: "./src/ts/index.ts",
+        minimal: "./src/ts/minimal.ts"
     },
     output: {
         path: path.resolve(__dirname, "dist")
@@ -23,10 +24,16 @@ const config = {
 
     plugins: [
         new HtmlWebpackPlugin({
-            title: "Hello BabylonJS !",
+            title: "WebGPU FFT Ocean",
             filename: "index.html",
             template: path.join(htmlPath, "index.html"),
             chunks: ["index"]
+        }),
+        new HtmlWebpackPlugin({
+            title: "Minimal WebGPU Example",
+            filename: "minimal.html",
+            template: path.join(htmlPath, "index.html"),
+            chunks: ["minimal"]
         }),
         new MiniCssExtractPlugin()
     ],

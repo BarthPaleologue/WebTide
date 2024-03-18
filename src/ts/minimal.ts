@@ -8,76 +8,49 @@ import "../styles/index.scss";
 
 import { ArcRotateCamera, Constants, DirectionalLight, WebGPUEngine } from "@babylonjs/core";
 import { BaseSpectrum } from "./baseSpectrum";
-import { createStorageTexture, createTexturedPlane } from "./utils";
+import { createStorageTexture } from "./utils";
 import { IFFT } from "./IFFT";
 import { DynamicSpectrum } from "./dynamicSpectrum";
 import { WaterMaterial } from "./waterMaterial";
-import { SkyMaterial } from "@babylonjs/materials";
 
 const canvas = document.getElementById("renderer") as HTMLCanvasElement;
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
 const engine = new WebGPUEngine(canvas);
-engine.loadingScreen.displayLoadingUI();
 await engine.initAsync();
 
 const scene = new Scene(engine);
 
 const camera = new ArcRotateCamera("camera", 3.14 / 3, 3.14 / 3, 5, Vector3.Zero(), scene);
-camera.wheelPrecision = 100;
 camera.attachControl();
 
 const light = new DirectionalLight("light", new Vector3(1, -1, 0).normalize(), scene);
-
-const sky = new SkyMaterial("sky", scene);
-sky.backFaceCulling = false;
-sky.sunPosition = light.direction.negate();
-sky.useSunPosition = true;
-
-const skyBox = MeshBuilder.CreateBox("skyBox", { size: 1000 }, scene);
-skyBox.material = sky;
 
 const textureSize = 512;
 const tileScale = 1000;
 
 const baseSpectrum = new BaseSpectrum(textureSize, tileScale, engine);
-
-createTexturedPlane(baseSpectrum.noise, scene);
-
-const h0k = createTexturedPlane(baseSpectrum.h0, scene);
-h0k.position.x += 1;
-
 const dynamicSpectrum = new DynamicSpectrum(baseSpectrum, engine);
-
-const ht = createTexturedPlane(dynamicSpectrum.ht, scene);
-ht.position.z -= 1;
 
 const ifft = new IFFT(engine, textureSize);
 const heightBuffer = createStorageTexture("heightBuffer", engine, textureSize, textureSize, Constants.TEXTUREFORMAT_RG);
 const gradientBuffer = createStorageTexture("gradientBuffer", engine, textureSize, textureSize, Constants.TEXTUREFORMAT_RG);
 const displacementBuffer = createStorageTexture("displacementBuffer", engine, textureSize, textureSize, Constants.TEXTUREFORMAT_RG);
 
-const twiddle = createTexturedPlane(heightBuffer, scene);
-twiddle.position.x -= 1;
-
-
 const waterMaterial = new WaterMaterial("waterMaterial", scene);
 waterMaterial.setTexture("heightMap", heightBuffer);
 waterMaterial.setTexture("gradientMap", gradientBuffer);
 waterMaterial.setTexture("displacementMap", displacementBuffer);
 
-const radius = 2;
-const tileSize = 10;
-for(let x = -radius; x <= radius; x++) {
-    for(let z = -radius; z <= radius; z++) {
-        const water = MeshBuilder.CreateGround("water", { width: tileSize, height: tileSize, subdivisions: textureSize }, scene);
-        water.material = waterMaterial;
-        water.position.x = x * tileSize;
-        water.position.z = z * tileSize;
-        water.position.y = -1;
-    }
-}
+const water = MeshBuilder.CreateGround("water", {
+    width: 10,
+    height: 10,
+    subdivisions: textureSize
+}, scene);
+water.material = waterMaterial;
+water.position.y = -1;
+
 
 // starting at 0 can create visual artefacts
 let clock = 60 * 60;
@@ -98,7 +71,6 @@ function updateScene() {
 }
 
 scene.executeWhenReady(() => {
-    engine.loadingScreen.hideLoadingUI();
     scene.registerBeforeRender(() => updateScene());
     engine.runRenderLoop(() => scene.render());
 });

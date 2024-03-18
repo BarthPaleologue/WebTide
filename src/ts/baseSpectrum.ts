@@ -43,9 +43,8 @@ export class BaseSpectrum {
         this.computeShader.setStorageTexture("H0", this.h0);
         this.computeShader.setTexture("Noise", this.noise, false);
         this.computeShader.setUniformBuffer("params", this.settings);
-    }
 
-    generate() {
+
         this.settings.updateInt("Size", this.textureSize);
         this.settings.updateFloat("tileScale", this.tileScale);
 
