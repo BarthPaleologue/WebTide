@@ -46,10 +46,18 @@ export function createGaussianNoiseTexture(textureSize: number, engine: ThinEngi
 }
 
 export function createTexturedPlane(texture: BaseTexture, scene: Scene): Mesh {
-    const plane = MeshBuilder.CreateGround("plane", { width: 1, height: 1 }, scene);
     const material = new StandardMaterial("planeMaterial", scene);
     material.emissiveTexture = texture;
     material.disableLighting = true;
+
+    const plane = MeshBuilder.CreatePlane("plane", { size: 1 }, scene);
     plane.material = material;
+
+    const activeCamera = scene.activeCamera;
+    if (activeCamera === null) throw new Error("No active camera in the scene");
+    plane.parent = activeCamera;
+
+    plane.position.z = activeCamera.minZ + 1;
+
     return plane;
 }
