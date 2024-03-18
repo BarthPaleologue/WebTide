@@ -42,8 +42,8 @@ const waterMaterial = new WaterMaterial("waterMaterial", textureSize, tileScale,
 
 const radius = 2;
 const tileSize = 10;
-for(let x = -radius; x <= radius; x++) {
-    for(let z = -radius; z <= radius; z++) {
+for (let x = -radius; x <= radius; x++) {
+    for (let z = -radius; z <= radius; z++) {
         const water = MeshBuilder.CreateGround("water", { width: tileSize, height: tileSize, subdivisions: textureSize }, scene);
         water.material = waterMaterial;
         water.position.x = x * tileSize;
@@ -68,4 +68,3 @@ window.addEventListener("resize", () => {
     canvas.height = window.innerHeight;
     engine.resize(true);
 });
-

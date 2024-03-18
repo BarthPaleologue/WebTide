@@ -28,11 +28,15 @@ const tileScale = 1000;
 
 const waterMaterial = new WaterMaterial("waterMaterial", textureSize, tileScale, scene, engine);
 
-const water = MeshBuilder.CreateGround("water", {
-    width: 10,
-    height: 10,
-    subdivisions: textureSize
-}, scene);
+const water = MeshBuilder.CreateGround(
+    "water",
+    {
+        width: 10,
+        height: 10,
+        subdivisions: textureSize
+    },
+    scene
+);
 water.material = waterMaterial;
 water.position.y = -1;
 
@@ -51,4 +55,3 @@ window.addEventListener("resize", () => {
     canvas.height = window.innerHeight;
     engine.resize(true);
 });
-

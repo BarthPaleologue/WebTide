@@ -9,14 +9,24 @@ import { Mesh } from "@babylonjs/core/Meshes/mesh";
 import { StandardMaterial } from "@babylonjs/core/Materials/standardMaterial";
 
 export function createStorageTexture(name: string, engine: ThinEngine, width: number, height: number, textureFormat: number): Texture {
-    const texture = new RawTexture(null, width, height, textureFormat, engine, false, false, Constants.TEXTURE_NEAREST_SAMPLINGMODE, Constants.TEXTURETYPE_FLOAT, Constants.TEXTURE_CREATIONFLAG_STORAGE);
+    const texture = new RawTexture(
+        null,
+        width,
+        height,
+        textureFormat,
+        engine,
+        false,
+        false,
+        Constants.TEXTURE_NEAREST_SAMPLINGMODE,
+        Constants.TEXTURETYPE_FLOAT,
+        Constants.TEXTURE_CREATIONFLAG_STORAGE
+    );
     texture.name = name;
     texture.wrapU = Constants.TEXTURE_WRAP_ADDRESSMODE;
     texture.wrapV = Constants.TEXTURE_WRAP_ADDRESSMODE;
 
     return texture;
 }
-
 
 /**
  * Generate a random number following a gaussian distribution

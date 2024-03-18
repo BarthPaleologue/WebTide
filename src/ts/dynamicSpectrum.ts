@@ -22,16 +22,21 @@ export class DynamicSpectrum {
     constructor(baseSpectrum: BaseSpectrum, engine: WebGPUEngine) {
         this.baseSpectrum = baseSpectrum;
 
-        this.computeShader = new ComputeShader("computeSpectrum", engine, { computeSource: spectrumWGSL }, {
-            bindingsMapping: {
-                "H0": { group: 0, binding: 0 },
-                "HT": { group: 0, binding: 1 },
-                "DHT": { group: 0, binding: 2 },
-                "Displacement": { group: 0, binding: 3 },
-                "params": { group: 0, binding: 4 },
-            },
-            entryPoint: "computeSpectrum"
-        });
+        this.computeShader = new ComputeShader(
+            "computeSpectrum",
+            engine,
+            { computeSource: spectrumWGSL },
+            {
+                bindingsMapping: {
+                    H0: { group: 0, binding: 0 },
+                    HT: { group: 0, binding: 1 },
+                    DHT: { group: 0, binding: 2 },
+                    Displacement: { group: 0, binding: 3 },
+                    params: { group: 0, binding: 4 }
+                },
+                entryPoint: "computeSpectrum"
+            }
+        );
 
         this.ht = createStorageTexture("ht", engine, baseSpectrum.textureSize, baseSpectrum.textureSize, Constants.TEXTUREFORMAT_RG);
         this.dht = createStorageTexture("dht", engine, baseSpectrum.textureSize, baseSpectrum.textureSize, Constants.TEXTUREFORMAT_RG);
@@ -39,9 +44,9 @@ export class DynamicSpectrum {
 
         this.settings = new UniformBuffer(engine);
 
-        this.settings.addUniform("Size", 1);
+        this.settings.addUniform("textureSize", 1);
         this.settings.addUniform("tileScale", 1);
-        this.settings.addUniform("ElapsedSeconds", 1);
+        this.settings.addUniform("elapsedSeconds", 1);
 
         this.computeShader.setStorageTexture("H0", this.baseSpectrum.h0);
         this.computeShader.setTexture("HT", this.ht, false);
@@ -51,9 +56,9 @@ export class DynamicSpectrum {
     }
 
     generate(elapsedSeconds: number) {
-        this.settings.updateInt("Size", this.baseSpectrum.textureSize);
+        this.settings.updateInt("textureSize", this.baseSpectrum.textureSize);
         this.settings.updateFloat("tileScale", this.baseSpectrum.tileScale);
-        this.settings.updateFloat("ElapsedSeconds", elapsedSeconds);
+        this.settings.updateFloat("elapsedSeconds", elapsedSeconds);
 
         this.settings.update();
 

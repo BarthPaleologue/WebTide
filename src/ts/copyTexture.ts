@@ -15,19 +15,21 @@ export class CopyTexture {
 
     static Copy(source: BaseTexture, dest: BaseTexture, engine: Engine): void {
         const numChannels = source.getInternalTexture()?.format === Constants.TEXTUREFORMAT_RG ? 2 : 4;
-        if (!CopyTexture.copy4ChannelsComputeShader && numChannels === 4 || !CopyTexture.copy2ChannelsComputeShader && numChannels === 2) {
-            const cs1 = new ComputeShader(`copyTexture${numChannels}Compute`, engine, {
-                computeSource: numChannels === 4 ?
-                    copyTexture4 :
-                    copyTexture2
-            }, {
-                bindingsMapping:
-                    {
-                        "dest": { group: 0, binding: 0 },
-                        "src": { group: 0, binding: 1 },
-                        "params": { group: 0, binding: 2 }
+        if ((!CopyTexture.copy4ChannelsComputeShader && numChannels === 4) || (!CopyTexture.copy2ChannelsComputeShader && numChannels === 2)) {
+            const cs1 = new ComputeShader(
+                `copyTexture${numChannels}Compute`,
+                engine,
+                {
+                    computeSource: numChannels === 4 ? copyTexture4 : copyTexture2
+                },
+                {
+                    bindingsMapping: {
+                        dest: { group: 0, binding: 0 },
+                        src: { group: 0, binding: 1 },
+                        params: { group: 0, binding: 2 }
                     }
-            });
+                }
+            );
 
             const uBuffer0 = new UniformBuffer(engine);
 

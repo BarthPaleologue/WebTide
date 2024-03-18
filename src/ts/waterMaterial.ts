@@ -27,10 +27,10 @@ export class WaterMaterial extends ShaderMaterial {
     private elapsedSeconds = 3600;
 
     constructor(name: string, textureSize: number, tileScale: number, scene: Scene, engine: WebGPUEngine) {
-        if(Effect.ShadersStore["oceanVertexShader"] === undefined) {
+        if (Effect.ShadersStore["oceanVertexShader"] === undefined) {
             Effect.ShadersStore["oceanVertexShader"] = vertex;
         }
-        if(Effect.ShadersStore["oceanFragmentShader"] === undefined) {
+        if (Effect.ShadersStore["oceanFragmentShader"] === undefined) {
             Effect.ShadersStore["oceanFragmentShader"] = fragment;
         }
         super(name, scene, "ocean", {
@@ -64,7 +64,7 @@ export class WaterMaterial extends ShaderMaterial {
         this.ifft.applyToTexture(this.dynamicSpectrum.displacement, this.displacementBuffer);
 
         const activeCamera = this.getScene().activeCamera;
-        if(activeCamera === null) throw new Error("No active camera found");
+        if (activeCamera === null) throw new Error("No active camera found");
         this.setVector3("cameraPositionW", activeCamera.globalPosition);
 
         this.setFloat("tileScale", this.tileScale);

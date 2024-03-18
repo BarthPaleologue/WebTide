@@ -1,15 +1,15 @@
-const PI : f32 = 3.1415926;
+const PI: f32 = 3.1415926;
 
-@group(0) @binding(0) var H0K : texture_storage_2d<rg32float, write>;
-@group(0) @binding(1) var H0 : texture_storage_2d<rgba32float, write>;
-@group(0) @binding(2) var Noise : texture_2d<f32>;
+@group(0) @binding(0) var H0K: texture_storage_2d<rg32float, write>;
+@group(0) @binding(1) var H0: texture_storage_2d<rgba32float, write>;
+@group(0) @binding(2) var Noise: texture_2d<f32>;
 
 struct Params {
-    Size : u32,
-    LengthScale : f32
+    textureSize: u32,
+    tileScale: f32
 };
 
-@group(0) @binding(3) var<uniform> params : Params;
+@group(0) @binding(3) var<uniform> params: Params;
 
 fn phillipsSpectrum2D(k: vec2<f32>) -> f32 {
     if(length(k) < 0.0001) {
@@ -33,17 +33,17 @@ fn phillipsSpectrum2D(k: vec2<f32>) -> f32 {
 }
 
 @compute @workgroup_size(8,8,1)
-fn computeSpectrum(@builtin(global_invocation_id) id : vec3<u32>)
+fn computeSpectrum(@builtin(global_invocation_id) id: vec3<u32>)
 {
-	let deltaK = 2.0 * PI / params.LengthScale;
-	let nx = f32(id.x) - f32(params.Size) / 2.0;
-	let nz = f32(id.y) - f32(params.Size) / 2.0;
+	let deltaK = 2.0 * PI / params.tileScale;
+	let nx = f32(id.x) - f32(params.textureSize) / 2.0;
+	let nz = f32(id.y) - f32(params.textureSize) / 2.0;
 	let k = vec2<f32>(nx, nz) * deltaK;
 
     let noise_k = textureLoad(Noise, vec2<i32>(id.xy), 0).xy;
     let h0_k = noise_k * sqrt(phillipsSpectrum2D(k) / 2.0);
 
-    let noise_minus_k = textureLoad(Noise, vec2<i32>(params.Size - id.xy), 0).xy;
+    let noise_minus_k = textureLoad(Noise, vec2<i32>(params.textureSize - id.xy), 0).xy;
     let h0_minus_k = noise_minus_k * sqrt(phillipsSpectrum2D(-k) / 2.0);
     let h0_minus_k_conj = vec2<f32>(h0_minus_k.x, -h0_minus_k.y);
 

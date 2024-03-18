@@ -23,15 +23,20 @@ export class BaseSpectrum {
         this.textureSize = textureSize;
         this.tileScale = tileScale;
 
-        this.computeShader = new ComputeShader("computeSpectrum", engine, { computeSource: spectrumWGSL }, {
-            bindingsMapping: {
-                "H0K": { group: 0, binding: 0 },
-                "H0": { group: 0, binding: 1 },
-                "Noise": { group: 0, binding: 2 },
-                "params": { group: 0, binding: 3 }
-            },
-            entryPoint: "computeSpectrum"
-        });
+        this.computeShader = new ComputeShader(
+            "computeSpectrum",
+            engine,
+            { computeSource: spectrumWGSL },
+            {
+                bindingsMapping: {
+                    H0K: { group: 0, binding: 0 },
+                    H0: { group: 0, binding: 1 },
+                    Noise: { group: 0, binding: 2 },
+                    params: { group: 0, binding: 3 }
+                },
+                entryPoint: "computeSpectrum"
+            }
+        );
 
         this.noise = createGaussianRandomTexture(textureSize, engine);
         this.h0 = createStorageTexture("h0", engine, textureSize, textureSize, Constants.TEXTUREFORMAT_RGBA);
@@ -39,7 +44,7 @@ export class BaseSpectrum {
 
         this.settings = new UniformBuffer(engine);
 
-        this.settings.addUniform("Size", 1);
+        this.settings.addUniform("textureSize", 1);
         this.settings.addUniform("tileScale", 1);
 
         this.computeShader.setStorageTexture("H0K", this.h0k);
@@ -47,8 +52,7 @@ export class BaseSpectrum {
         this.computeShader.setTexture("Noise", this.noise, false);
         this.computeShader.setUniformBuffer("params", this.settings);
 
-
-        this.settings.updateInt("Size", this.textureSize);
+        this.settings.updateInt("textureSize", this.textureSize);
         this.settings.updateFloat("tileScale", this.tileScale);
 
         this.settings.update();

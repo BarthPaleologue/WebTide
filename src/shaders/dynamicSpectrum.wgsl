@@ -1,4 +1,4 @@
-const PI : f32 = 3.1415926;
+const PI: f32 = 3.1415926;
 
 @group(0) @binding(0) var H0: texture_2d<f32>;
 @group(0) @binding(1) var HT: texture_storage_2d<rg32float, write>;
@@ -6,9 +6,9 @@ const PI : f32 = 3.1415926;
 @group(0) @binding(3) var Displacement: texture_storage_2d<rg32float, write>;
 
 struct Params {
-    Size: u32,
-    LengthScale: f32,
-    ElapsedSeconds: f32,
+    textureSize: u32,
+    tileScale: f32,
+    elapsedSeconds: f32,
 };
 
 @group(0) @binding(4) var<uniform> params: Params;
@@ -25,12 +25,12 @@ fn complexMult(a: vec2<f32>, b: vec2<f32>) -> vec2<f32> {
 fn computeSpectrum(@builtin(global_invocation_id) id: vec3<u32>) {
     let iid = vec3<i32>(id);
 
-    let deltaK = 2.0 * PI / params.LengthScale;
-    let nx = f32(id.x) - f32(params.Size) / 2.0;
-    let nz = f32(id.y) - f32(params.Size) / 2.0;
+    let deltaK = 2.0 * PI / params.tileScale;
+    let nx = f32(id.x) - f32(params.textureSize) / 2.0;
+    let nz = f32(id.y) - f32(params.textureSize) / 2.0;
     let k = vec2<f32>(nx, nz) * deltaK;
 
-	let theta = params.ElapsedSeconds * omega(k);
+	let theta = params.elapsedSeconds * omega(k);
 	let exponent = vec2<f32>(cos(theta), sin(theta));
     let h0: vec4<f32> = textureLoad(H0, iid.xy, 0);
 

@@ -28,13 +28,18 @@ export class IFFT {
         this.engine = engine;
         this.textureSize = textureSize;
 
-        this.precompute = new ComputeShader("computeTwiddleFactors", this.engine, { computeSource: twiddleFactors }, {
-            bindingsMapping: {
-                "PrecomputeBuffer": { group: 0, binding: 0 },
-                "params": { group: 0, binding: 1 }
-            },
-            entryPoint: "precomputeTwiddleFactorsAndInputIndices"
-        });
+        this.precompute = new ComputeShader(
+            "computeTwiddleFactors",
+            this.engine,
+            { computeSource: twiddleFactors },
+            {
+                bindingsMapping: {
+                    PrecomputeBuffer: { group: 0, binding: 0 },
+                    params: { group: 0, binding: 1 }
+                },
+                entryPoint: "precomputeTwiddleFactorsAndInputIndices"
+            }
+        );
 
         const logSize = Math.log2(textureSize) | 0;
 
@@ -42,50 +47,65 @@ export class IFFT {
 
         this.settings = new UniformBuffer(this.engine);
 
-        this.settings.addUniform("Step", 1);
-        this.settings.addUniform("Size", 1);
+        this.settings.addUniform("step", 1);
+        this.settings.addUniform("textureSize", 1);
 
         this.precompute.setStorageTexture("PrecomputeBuffer", this.twiddleTable);
         this.precompute.setUniformBuffer("params", this.settings);
 
-        this.settings.updateInt("Size", this.textureSize);
+        this.settings.updateInt("textureSize", this.textureSize);
         this.settings.update();
 
         this.precompute.dispatch(logSize, this.textureSize / 2 / 8, 1);
 
-        this.horizontalStepIFFT = new ComputeShader("horizontalStepIFFT", this.engine, { computeSource: horizontalStep }, {
-            bindingsMapping: {
-                "params": { group: 0, binding: 0 },
-                "PrecomputedData": { group: 0, binding: 1 },
-                "InputBuffer": { group: 0, binding: 2 },
-                "OutputBuffer": { group: 0, binding: 3 }
-            },
-            entryPoint: "horizontalStepInverseFFT"
-        });
+        this.horizontalStepIFFT = new ComputeShader(
+            "horizontalStepIFFT",
+            this.engine,
+            { computeSource: horizontalStep },
+            {
+                bindingsMapping: {
+                    params: { group: 0, binding: 0 },
+                    PrecomputedData: { group: 0, binding: 1 },
+                    InputBuffer: { group: 0, binding: 2 },
+                    OutputBuffer: { group: 0, binding: 3 }
+                },
+                entryPoint: "horizontalStepInverseFFT"
+            }
+        );
 
         this.horizontalStepIFFT.setUniformBuffer("params", this.settings);
         this.horizontalStepIFFT.setTexture("PrecomputedData", this.twiddleTable, false);
 
-        this.verticalStepIFFT = new ComputeShader("verticalStepIFFT", this.engine, { computeSource: verticalStep }, {
-            bindingsMapping: {
-                "params": { group: 0, binding: 0 },
-                "PrecomputedData": { group: 0, binding: 1 },
-                "InputBuffer": { group: 0, binding: 2 },
-                "OutputBuffer": { group: 0, binding: 3 }
-            },
-            entryPoint: "verticalStepInverseFFT"
-        });
+        this.verticalStepIFFT = new ComputeShader(
+            "verticalStepIFFT",
+            this.engine,
+            { computeSource: verticalStep },
+            {
+                bindingsMapping: {
+                    params: { group: 0, binding: 0 },
+                    PrecomputedData: { group: 0, binding: 1 },
+                    InputBuffer: { group: 0, binding: 2 },
+                    OutputBuffer: { group: 0, binding: 3 }
+                },
+                entryPoint: "verticalStepInverseFFT"
+            }
+        );
 
         this.verticalStepIFFT.setUniformBuffer("params", this.settings);
         this.verticalStepIFFT.setTexture("PrecomputedData", this.twiddleTable, false);
 
-        this.permutation = new ComputeShader("permute", this.engine, { computeSource: permutation }, {
-            bindingsMapping: {
-                "InputBuffer": { group: 0, binding: 0 },
-                "OutputBuffer": { group: 0, binding: 1 }
-            },
-            entryPoint: "permute"
-        });
+        this.permutation = new ComputeShader(
+            "permute",
+            this.engine,
+            { computeSource: permutation },
+            {
+                bindingsMapping: {
+                    InputBuffer: { group: 0, binding: 0 },
+                    OutputBuffer: { group: 0, binding: 1 }
+                },
+                entryPoint: "permute"
+            }
+        );
     }
 
     /**
@@ -101,7 +121,7 @@ export class IFFT {
         for (let i = 0; i < logSize; ++i) {
             pingPong = !pingPong;
 
-            this.settings.updateInt("Step", i);
+            this.settings.updateInt("step", i);
             this.settings.update();
 
             this.horizontalStepIFFT.setTexture("InputBuffer", pingPong ? input : output, false);
@@ -113,7 +133,7 @@ export class IFFT {
         for (let i = 0; i < logSize; ++i) {
             pingPong = !pingPong;
 
-            this.settings.updateInt("Step", i);
+            this.settings.updateInt("step", i);
             this.settings.update();
 
             this.verticalStepIFFT.setTexture("InputBuffer", pingPong ? input : output, false);
