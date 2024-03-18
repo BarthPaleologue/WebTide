@@ -28,7 +28,7 @@ vec3 sampleHeightAndGradient(vec2 point) {
     return heightAndGradient * scalingFactor * 0.8;
 }
 
-void main(void) {
+void main() {
     vec3 waterPosition = position;
 
     vec2 displacement = texture(displacementMap, uv).rg * scalingFactor;
@@ -36,7 +36,7 @@ void main(void) {
     waterPosition.z += displacement.y;
 
     vec3 heightAndGradient = sampleHeightAndGradient(uv);
-    waterPosition.y = heightAndGradient.x;
+    waterPosition.y += heightAndGradient.x;
     vec3 normal = normalize(vec3(-heightAndGradient.y, 1.0, -heightAndGradient.z));
 
     vPosition = waterPosition;
