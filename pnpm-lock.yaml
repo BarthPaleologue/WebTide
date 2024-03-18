@@ -8,9 +8,6 @@ devDependencies:
   '@babylonjs/core':
     specifier: ^6.47.0
     version: 6.47.0
-  '@babylonjs/materials':
-    specifier: ^6.47.0
-    version: 6.47.0(@babylonjs/core@6.47.0)
   '@typescript-eslint/eslint-plugin':
     specifier: ^5.62.0
     version: 5.62.0(@typescript-eslint/parser@5.62.0)(eslint@8.57.0)(typescript@4.9.5)
@@ -125,14 +122,6 @@ packages:
 
   /@babylonjs/core@6.47.0:
     resolution: {integrity: sha512-+zu8xQkgcSOV8J99jiJ4uG0kuPRlGsA1BzwHiYgB/psX7MLWl8r4n5gbG7qUe4vEyYS2twaZW37OeT2Xf5ITHA==}
-    dev: true
-
-  /@babylonjs/materials@6.47.0(@babylonjs/core@6.47.0):
-    resolution: {integrity: sha512-jlK8Du+Xn+noXGFyhzEWjmuK3rg3eTPgPp4vireT9TTJBUbvf7iKXo3CE1rOxijtfebBjnluXMyZrUcbRYI8vg==}
-    peerDependencies:
-      '@babylonjs/core': ^6.0.0
-    dependencies:
-      '@babylonjs/core': 6.47.0
     dev: true
 
   /@cspotcode/source-map-support@0.8.1:

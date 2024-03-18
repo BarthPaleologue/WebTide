@@ -11,6 +11,14 @@ import { WebGPUEngine } from "@babylonjs/core/Engines/webgpuEngine";
 import { Effect } from "@babylonjs/core/Materials/effect";
 import { Constants } from "@babylonjs/core/Engines/constants";
 import { InitialSpectrum } from "./initialSpectrum";
+import { CubeTexture } from "@babylonjs/core/Materials/Textures/cubeTexture";
+
+import TropicalSunnyDay_px from "../assets/skybox/TropicalSunnyDay_px.jpg";
+import TropicalSunnyDay_py from "../assets/skybox/TropicalSunnyDay_py.jpg";
+import TropicalSunnyDay_pz from "../assets/skybox/TropicalSunnyDay_pz.jpg";
+import TropicalSunnyDay_nx from "../assets/skybox/TropicalSunnyDay_nx.jpg";
+import TropicalSunnyDay_ny from "../assets/skybox/TropicalSunnyDay_ny.jpg";
+import TropicalSunnyDay_nz from "../assets/skybox/TropicalSunnyDay_nz.jpg";
 
 /**
  * The material that makes all the magic happen. Its vertex shader deforms the water mesh according to the height map
@@ -26,6 +34,8 @@ export class WaterMaterial extends ShaderMaterial {
      * The scale of the ocean tiles. A higher value will make the waves smaller and more frequent.
      */
     readonly tileScale: number;
+
+    readonly reflectionTexture: CubeTexture;
 
     /**
      * The spectrum describing the simulation at time t=0.
@@ -77,9 +87,16 @@ export class WaterMaterial extends ShaderMaterial {
         }
         super(name, scene, "ocean", {
             attributes: ["position", "normal", "uv"],
-            uniforms: ["world", "worldView", "worldViewProjection", "view", "projection", "cameraPositionW", "lightDirection", "tileScale"],
-            samplers: ["heightMap", "gradientMap", "displacementMap"]
+            uniforms: ["world", "worldView", "worldViewProjection", "view", "projection", "cameraPositionW", "lightDirection"],
+            samplers: ["heightMap", "gradientMap", "displacementMap", "reflectionSampler"]
         });
+
+        this.reflectionTexture = new CubeTexture("", scene, null, false, [
+            TropicalSunnyDay_px, TropicalSunnyDay_py, TropicalSunnyDay_pz,
+            TropicalSunnyDay_nx, TropicalSunnyDay_ny, TropicalSunnyDay_nz
+        ]);
+        //this.reflectionTexture.coordinatesMode = Constants.TEXTURE_CUBE_MAP;
+        this.setTexture("reflectionSampler", this.reflectionTexture);
 
         if(initialSpectrum.h0.textureFormat != Constants.TEXTUREFORMAT_RGBA) {
             throw new Error("The base spectrum must have a texture format of RGBA");
@@ -119,7 +136,6 @@ export class WaterMaterial extends ShaderMaterial {
         if (activeCamera === null) throw new Error("No active camera found");
         this.setVector3("cameraPositionW", activeCamera.globalPosition);
 
-        this.setFloat("tileScale", this.tileScale);
         this.setVector3("lightDirection", lightDirection);
     }
 

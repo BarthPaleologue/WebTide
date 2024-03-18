@@ -11,8 +11,6 @@ uniform sampler2D heightMap;
 uniform sampler2D gradientMap;
 uniform sampler2D displacementMap;
 
-uniform float tileScale;
-
 varying vec3 vNormalW;
 varying vec2 vUV;
 varying vec3 vPosition;
