@@ -22,8 +22,9 @@ export class BaseSpectrum {
         this.computeShader = new ComputeShader("computeSpectrum", engine, { computeSource: spectrumWGSL }, {
             bindingsMapping: {
                 "H0K": { group: 0, binding: 0 },
-                "Noise": { group: 0, binding: 1 },
-                "params": { group: 0, binding: 2 }
+                "H0": { group: 0, binding: 1 },
+                "Noise": { group: 0, binding: 2 },
+                "params": { group: 0, binding: 3 }
             },
             entryPoint: "computeSpectrum"
         });
@@ -38,6 +39,7 @@ export class BaseSpectrum {
         this.settings.addUniform("LengthScale", 1);
 
         this.computeShader.setStorageTexture("H0K", this.h0k);
+        this.computeShader.setStorageTexture("H0", this.h0);
         this.computeShader.setTexture("Noise", this.noise, false);
         this.computeShader.setUniformBuffer("params", this.settings);
     }
