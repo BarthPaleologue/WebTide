@@ -27,7 +27,7 @@ const camera = new ArcRotateCamera("camera", 3.14 / 3, 3.14 / 3, 5, Vector3.Zero
 camera.wheelPrecision = 100;
 camera.attachControl();
 
-const light = new DirectionalLight("light", new Vector3(3, -1, 0).normalize(), scene);
+const light = new DirectionalLight("light", new Vector3(1, -1, 0).normalize(), scene);
 
 const sky = new SkyMaterial("sky", scene);
 sky.backFaceCulling = false;
