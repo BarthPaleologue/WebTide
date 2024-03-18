@@ -1,4 +1,4 @@
-import { Constants, Mesh, Nullable, RawTexture, StandardMaterial, ThinEngine } from "@babylonjs/core";
+import { BaseTexture, Constants, Mesh, Nullable, RawTexture, StandardMaterial, ThinEngine } from "@babylonjs/core";
 import { Texture } from "@babylonjs/core/Materials/Textures/texture";
 import { Scene } from "@babylonjs/core/scene";
 import { MeshBuilder } from "@babylonjs/core/Meshes/meshBuilder";
@@ -46,7 +46,7 @@ export function createGaussianRandomTexture(textureSize: number, engine: ThinEng
     return new RawTexture(dataArray, textureSize, textureSize, Constants.TEXTUREFORMAT_RG, engine, false, false, Constants.TEXTURE_NEAREST_SAMPLINGMODE);
 }
 
-export function createTexturedPlane(texture: Texture, scene: Scene): Mesh {
+export function createTexturedPlane(texture: BaseTexture, scene: Scene): Mesh {
     const plane = MeshBuilder.CreateGround("plane", { width: 1, height: 1 }, scene);
     const material = new StandardMaterial("planeMaterial", scene);
     material.emissiveTexture = texture;
