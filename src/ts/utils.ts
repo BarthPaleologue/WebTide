@@ -35,7 +35,7 @@ export function gaussianRandom() {
     return Math.cos(2 * Math.PI * Math.random()) * Math.sqrt(-2 * Math.log(Math.random()));
 }
 
-export function createGaussianRandomTexture(textureSize: number, engine: ThinEngine) {
+export function createGaussianNoiseTexture(textureSize: number, engine: ThinEngine) {
     const dataArray = new Uint8Array(textureSize * textureSize * 2);
     for (let i = 0; i < dataArray.length; i += 2) {
         dataArray[i] = gaussianRandom();

@@ -1,6 +1,5 @@
 const PI: f32 = 3.1415926;
 
-@group(0) @binding(0) var H0K: texture_storage_2d<rg32float, write>;
 @group(0) @binding(1) var H0: texture_storage_2d<rgba32float, write>;
 @group(0) @binding(2) var Noise: texture_2d<f32>;
 
@@ -47,6 +46,5 @@ fn computeSpectrum(@builtin(global_invocation_id) id: vec3<u32>)
     let h0_minus_k = noise_minus_k * sqrt(phillipsSpectrum2D(-k) / 2.0);
     let h0_minus_k_conj = vec2<f32>(h0_minus_k.x, -h0_minus_k.y);
 
-    textureStore(H0K, vec2<i32>(id.xy), vec4<f32>(h0_k, vec2(0.0)));
     textureStore(H0, vec2<i32>(id.xy), vec4<f32>(h0_k, h0_minus_k_conj));
 }
