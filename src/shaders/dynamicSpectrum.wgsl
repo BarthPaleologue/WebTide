@@ -11,7 +11,7 @@ struct Params {
 
 @group(0) @binding(2) var<uniform> params: Params;
 
-fn phase(k: vec2<f32>) -> f32 {
+fn omega(k: vec2<f32>) -> f32 {
     return sqrt(length(k) * 9.81);
 }
 
@@ -28,7 +28,7 @@ fn computeSpectrum(@builtin(global_invocation_id) id: vec3<u32>) {
     let nz = f32(id.y) - f32(params.Size) / 2.0;
     let k = vec2<f32>(nx, nz) * deltaK;
 
-	let theta = params.ElapsedSeconds * phase(k);
+	let theta = params.ElapsedSeconds * omega(k);
 	let exponent = vec2<f32>(cos(theta), sin(theta));
     let h0: vec4<f32> = textureLoad(H0, iid.xy, 0);
 
