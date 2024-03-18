@@ -3,7 +3,7 @@ import vertex from "../shaders/waterMaterial/vertex.glsl";
 import { Scene } from "@babylonjs/core/scene";
 import { IFFT } from "./IFFT";
 import { createStorageTexture } from "./utils";
-import { BaseSpectrum } from "./baseSpectrum";
+import { PhillipsSpectrum } from "./phillipsSpectrum";
 import { DynamicSpectrum } from "./dynamicSpectrum";
 import { Vector3 } from "@babylonjs/core/Maths/math.vector";
 import { ShaderMaterial } from "@babylonjs/core/Materials/shaderMaterial";
@@ -11,12 +11,13 @@ import { BaseTexture } from "@babylonjs/core/Materials/Textures/baseTexture";
 import { WebGPUEngine } from "@babylonjs/core/Engines/webgpuEngine";
 import { Effect } from "@babylonjs/core/Materials/effect";
 import { Constants } from "@babylonjs/core/Engines/constants";
+import { Spectrum } from "./spectrum";
 
 export class WaterMaterial extends ShaderMaterial {
     readonly textureSize: number;
     readonly tileScale: number;
 
-    readonly baseSpectrum: BaseSpectrum;
+    readonly baseSpectrum: Spectrum;
     readonly dynamicSpectrum: DynamicSpectrum;
 
     readonly ifft: IFFT;
@@ -26,7 +27,7 @@ export class WaterMaterial extends ShaderMaterial {
 
     private elapsedSeconds = 3600;
 
-    constructor(name: string, textureSize: number, tileScale: number, scene: Scene, engine: WebGPUEngine) {
+    constructor(name: string, textureSize: number, tileScale: number, scene: Scene, engine: WebGPUEngine, baseSpectrum: Spectrum = new PhillipsSpectrum(textureSize, tileScale, engine)) {
         if (Effect.ShadersStore["oceanVertexShader"] === undefined) {
             Effect.ShadersStore["oceanVertexShader"] = vertex;
         }
@@ -42,7 +43,7 @@ export class WaterMaterial extends ShaderMaterial {
         this.textureSize = textureSize;
         this.tileScale = tileScale;
 
-        this.baseSpectrum = new BaseSpectrum(textureSize, tileScale, engine);
+        this.baseSpectrum = baseSpectrum;
         this.dynamicSpectrum = new DynamicSpectrum(this.baseSpectrum, engine);
 
         this.ifft = new IFFT(engine, textureSize);

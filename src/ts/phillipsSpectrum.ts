@@ -4,14 +4,15 @@ import { ComputeShader } from "@babylonjs/core/Compute/computeShader";
 import { UniformBuffer } from "@babylonjs/core/Materials/uniformBuffer";
 import { WebGPUEngine } from "@babylonjs/core/Engines/webgpuEngine";
 import { Constants } from "@babylonjs/core/Engines/constants";
+import { Spectrum } from "./spectrum";
 
-import spectrumWGSL from "../shaders/baseSpectrum.wgsl";
+import spectrumWGSL from "../shaders/phillipsSpectrum.wgsl";
 
-export class BaseSpectrum {
+export class PhillipsSpectrum implements Spectrum {
     private computeShader: ComputeShader;
 
     readonly noise: Texture;
-    h0: Texture;
+    readonly h0: Texture;
     readonly h0k: Texture;
 
     private readonly settings: UniformBuffer;

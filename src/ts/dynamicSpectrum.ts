@@ -1,15 +1,15 @@
 import { createStorageTexture } from "./utils";
 import { Texture } from "@babylonjs/core/Materials/Textures/texture";
-import { BaseSpectrum } from "./baseSpectrum";
 import { ComputeShader } from "@babylonjs/core/Compute/computeShader";
 import { UniformBuffer } from "@babylonjs/core/Materials/uniformBuffer";
 import { WebGPUEngine } from "@babylonjs/core/Engines/webgpuEngine";
 import { Constants } from "@babylonjs/core/Engines/constants";
 
 import spectrumWGSL from "../shaders/dynamicSpectrum.wgsl";
+import { Spectrum } from "./spectrum";
 
 export class DynamicSpectrum {
-    private baseSpectrum: BaseSpectrum;
+    private baseSpectrum: Spectrum;
 
     private computeShader: ComputeShader;
 
@@ -19,7 +19,7 @@ export class DynamicSpectrum {
 
     private readonly settings: UniformBuffer;
 
-    constructor(baseSpectrum: BaseSpectrum, engine: WebGPUEngine) {
+    constructor(baseSpectrum: Spectrum, engine: WebGPUEngine) {
         this.baseSpectrum = baseSpectrum;
 
         this.computeShader = new ComputeShader(
