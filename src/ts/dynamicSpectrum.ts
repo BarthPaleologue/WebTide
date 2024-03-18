@@ -12,6 +12,7 @@ export class DynamicSpectrum {
     private computeShader: ComputeShader;
 
     readonly ht: Texture;
+    readonly dht: Texture;
 
     private readonly settings: UniformBuffer;
 
@@ -22,12 +23,14 @@ export class DynamicSpectrum {
             bindingsMapping: {
                 "H0": { group: 0, binding: 0 },
                 "HT": { group: 0, binding: 1 },
-                "params": { group: 0, binding: 2 },
+                "DHT": { group: 0, binding: 2 },
+                "params": { group: 0, binding: 3 },
             },
             entryPoint: "computeSpectrum"
         });
 
         this.ht = createStorageTexture("ht", engine, baseSpectrum.textureSize, baseSpectrum.textureSize, Constants.TEXTUREFORMAT_RG);
+        this.dht = createStorageTexture("dht", engine, baseSpectrum.textureSize, baseSpectrum.textureSize, Constants.TEXTUREFORMAT_RG);
 
         this.settings = new UniformBuffer(engine);
 
@@ -37,6 +40,7 @@ export class DynamicSpectrum {
 
         this.computeShader.setStorageTexture("H0", this.baseSpectrum.h0);
         this.computeShader.setTexture("HT", this.ht, false);
+        this.computeShader.setTexture("DHT", this.dht, false);
         this.computeShader.setUniformBuffer("params", this.settings);
     }
 

@@ -14,10 +14,11 @@ export class BaseSpectrum {
     private readonly settings: UniformBuffer;
 
     readonly textureSize;
-    readonly lengthScale = 500;
+    readonly lengthScale;
 
-    constructor(textureSize: number, engine: WebGPUEngine) {
+    constructor(textureSize: number, lengthScale: number, engine: WebGPUEngine) {
         this.textureSize = textureSize;
+        this.lengthScale = lengthScale;
 
         this.computeShader = new ComputeShader("computeSpectrum", engine, { computeSource: spectrumWGSL }, {
             bindingsMapping: {

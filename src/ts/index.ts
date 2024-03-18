@@ -38,8 +38,9 @@ const skyBox = MeshBuilder.CreateBox("skyBox", { size: 1000 }, scene);
 skyBox.material = sky;
 
 const textureSize = 512;
+const lengthScale = 1000;
 
-const baseSpectrum = new BaseSpectrum(textureSize, engine);
+const baseSpectrum = new BaseSpectrum(textureSize, lengthScale, engine);
 baseSpectrum.generate();
 
 createTexturedPlane(baseSpectrum.noise, scene);
@@ -53,9 +54,10 @@ const ht = createTexturedPlane(dynamicSpectrum.ht, scene);
 ht.position.z -= 1;
 
 const ifft = new IFFT(engine, textureSize);
-const buffer = createStorageTexture("buffer", engine, textureSize, textureSize, Constants.TEXTUREFORMAT_RG);
+const heightBuffer = createStorageTexture("buffer", engine, textureSize, textureSize, Constants.TEXTUREFORMAT_RG);
+const gradientBuffer = createStorageTexture("gradientBuffer", engine, textureSize, textureSize, Constants.TEXTUREFORMAT_RG);
 
-const twiddle = createTexturedPlane(buffer, scene);
+const twiddle = createTexturedPlane(heightBuffer, scene);
 twiddle.position.x -= 1;
 
 
@@ -81,10 +83,12 @@ function updateScene() {
 
     dynamicSpectrum.generate(clock);
 
-    ifft.applyToTexture(dynamicSpectrum.ht, buffer);
+    ifft.applyToTexture(dynamicSpectrum.ht, heightBuffer);
+    ifft.applyToTexture(dynamicSpectrum.dht, gradientBuffer);
 
-
-    waterMaterial.setTexture("heightMap", buffer);
+    waterMaterial.setTexture("heightMap", heightBuffer);
+    waterMaterial.setTexture("gradientMap", gradientBuffer);
+    waterMaterial.setFloat("lengthScale", lengthScale);
     waterMaterial.setVector3("cameraPositionW", camera.globalPosition);
     waterMaterial.setVector3("lightDirection", light.direction);
 }

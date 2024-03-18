@@ -2,6 +2,7 @@ const PI : f32 = 3.1415926;
 
 @group(0) @binding(0) var H0: texture_2d<f32>;
 @group(0) @binding(1) var HT: texture_storage_2d<rg32float, write>;
+@group(0) @binding(2) var DHT: texture_storage_2d<rg32float, write>;
 
 struct Params {
     Size: u32,
@@ -9,7 +10,7 @@ struct Params {
     ElapsedSeconds: f32,
 };
 
-@group(0) @binding(2) var<uniform> params: Params;
+@group(0) @binding(3) var<uniform> params: Params;
 
 fn omega(k: vec2<f32>) -> f32 {
     return sqrt(length(k) * 9.81);
@@ -34,5 +35,10 @@ fn computeSpectrum(@builtin(global_invocation_id) id: vec3<u32>) {
 
 	let h = complexMult(h0.xy, exponent) + complexMult(h0.zw, vec2<f32>(exponent.x, -exponent.y));
 
+	let ih = vec2<f32>(-h.y, h.x);
+
+	let ikh = complexMult(k, ih);
+
     textureStore(HT, iid.xy, vec4<f32>(h.x, h.y, 0.0, 0.0));
+    textureStore(DHT, iid.xy, vec4<f32>(ikh.x, ikh.y, 0.0, 0.0));
 }
