@@ -13,16 +13,20 @@ import "@babylonjs/core/Loading/loadingScreen";
 import "../styles/index.scss";
 
 import postprocessCode from "../shaders/smallPostProcess.glsl";
+import { ArcRotateCamera, WebGPUEngine } from "@babylonjs/core";
+import { BaseSpectrum } from "./baseSpectrum";
+import { createTexturedPlane } from "./utils";
 
 const canvas = document.getElementById("renderer") as HTMLCanvasElement;
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
-const engine = new Engine(canvas);
+const engine = new WebGPUEngine(canvas);
+await engine.initAsync();
 
 const scene = new Scene(engine);
 
-const camera = new FreeCamera("camera", Vector3.Zero(), scene);
+const camera = new ArcRotateCamera("camera", 3.14 / 3, 3.14 / 3, 5, Vector3.Zero(), scene);
 camera.attachControl();
 
 const light = new PointLight("light", new Vector3(-5, 5, 10), scene);
@@ -30,8 +34,16 @@ const light = new PointLight("light", new Vector3(-5, 5, 10), scene);
 const sphere = MeshBuilder.CreateSphere("sphere", { segments: 32, diameter: 1 }, scene);
 sphere.position = new Vector3(0, 0, 10);
 
-Effect.ShadersStore[`PostProcess1FragmentShader`] = postprocessCode;
-const postProcess = new PostProcess("postProcess1", "PostProcess1", [], ["textureSampler"], 1, camera, Texture.BILINEAR_SAMPLINGMODE, engine);
+const baseSpectrum = new BaseSpectrum(256, engine);
+baseSpectrum.generate();
+
+createTexturedPlane(baseSpectrum.noise, scene);
+
+const h0 = createTexturedPlane(baseSpectrum.h0, scene);
+h0.position.x += 1;
+
+//Effect.ShadersStore[`PostProcess1FragmentShader`] = postprocessCode;
+//const postProcess = new PostProcess("postProcess1", "PostProcess1", [], ["textureSampler"], 1, camera, Texture.BILINEAR_SAMPLINGMODE, engine);
 
 let clock = 0;
 
@@ -50,8 +62,8 @@ scene.executeWhenReady(() => {
 });
 
 window.addEventListener("resize", () => {
-    engine.resize();
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
+    engine.resize(true);
 });
 
