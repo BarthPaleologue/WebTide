@@ -57,7 +57,7 @@ const config = {
                 loader: "html-loader"
             },
             {
-                test: /\.(glsl|vs|fs|vert|frag|fx)$/,
+                test: /\.(glsl|vs|fs|vert|frag|fx|wgsl)$/,
                 exclude: /node_modules/,
                 use: ["ts-shader-loader"]
             }
