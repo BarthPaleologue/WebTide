@@ -1,12 +1,12 @@
+import "../styles/index.scss";
+
 import { Scene } from "@babylonjs/core/scene";
 import { Vector3 } from "@babylonjs/core/Maths/math.vector";
 import { MeshBuilder } from "@babylonjs/core/Meshes/meshBuilder";
-import "@babylonjs/core/Materials/standardMaterial";
-import "@babylonjs/core/Loading/loadingScreen";
+import { WebGPUEngine } from "@babylonjs/core/Engines";
+import { ArcRotateCamera } from "@babylonjs/core/Cameras/arcRotateCamera";
+import { DirectionalLight } from "@babylonjs/core/Lights/directionalLight";
 
-import "../styles/index.scss";
-
-import { ArcRotateCamera, DirectionalLight, WebGPUEngine } from "@babylonjs/core";
 import { WaterMaterial } from "./waterMaterial";
 
 const canvas = document.getElementById("renderer") as HTMLCanvasElement;

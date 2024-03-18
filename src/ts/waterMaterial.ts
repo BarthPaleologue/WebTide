@@ -1,5 +1,3 @@
-import { BaseTexture, Constants, Effect, ShaderMaterial, WebGPUEngine } from "@babylonjs/core";
-
 import fragment from "../shaders/waterMaterial/fragment.glsl";
 import vertex from "../shaders/waterMaterial/vertex.glsl";
 import { Scene } from "@babylonjs/core/scene";
@@ -8,6 +6,11 @@ import { createStorageTexture } from "./utils";
 import { BaseSpectrum } from "./baseSpectrum";
 import { DynamicSpectrum } from "./dynamicSpectrum";
 import { Vector3 } from "@babylonjs/core/Maths/math.vector";
+import { ShaderMaterial } from "@babylonjs/core/Materials/shaderMaterial";
+import { BaseTexture } from "@babylonjs/core/Materials/Textures/baseTexture";
+import { WebGPUEngine } from "@babylonjs/core/Engines/webgpuEngine";
+import { Effect } from "@babylonjs/core/Materials/effect";
+import { Constants } from "@babylonjs/core/Engines/constants";
 
 export class WaterMaterial extends ShaderMaterial {
     readonly textureSize: number;

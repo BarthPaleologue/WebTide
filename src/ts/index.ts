@@ -1,15 +1,15 @@
+import "../styles/index.scss";
+
 import { Scene } from "@babylonjs/core/scene";
 import { Vector3 } from "@babylonjs/core/Maths/math.vector";
 import { MeshBuilder } from "@babylonjs/core/Meshes/meshBuilder";
-import "@babylonjs/core/Materials/standardMaterial";
 import "@babylonjs/core/Loading/loadingScreen";
-
-import "../styles/index.scss";
-
-import { ArcRotateCamera, DirectionalLight, WebGPUEngine } from "@babylonjs/core";
-import { createTexturedPlane } from "./utils";
-import { WaterMaterial } from "./waterMaterial";
 import { SkyMaterial } from "@babylonjs/materials";
+import { WebGPUEngine } from "@babylonjs/core/Engines";
+import { ArcRotateCamera } from "@babylonjs/core/Cameras/arcRotateCamera";
+import { DirectionalLight } from "@babylonjs/core/Lights/directionalLight";
+
+import { WaterMaterial } from "./waterMaterial";
 
 const canvas = document.getElementById("renderer") as HTMLCanvasElement;
 canvas.width = window.innerWidth;
@@ -39,17 +39,6 @@ const textureSize = 512;
 const tileScale = 1000;
 
 const waterMaterial = new WaterMaterial("waterMaterial", textureSize, tileScale, scene, engine);
-
-createTexturedPlane(waterMaterial.baseSpectrum.noise, scene);
-
-const h0k = createTexturedPlane(waterMaterial.baseSpectrum.h0, scene);
-h0k.position.x += 1;
-
-const ht = createTexturedPlane(waterMaterial.dynamicSpectrum.ht, scene);
-ht.position.z -= 1;
-
-const twiddle = createTexturedPlane(waterMaterial.heightBuffer, scene);
-twiddle.position.x -= 1;
 
 const radius = 2;
 const tileSize = 10;

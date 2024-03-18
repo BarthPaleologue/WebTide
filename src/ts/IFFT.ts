@@ -1,12 +1,14 @@
-import { BaseTexture, ComputeShader, Constants, UniformBuffer } from "@babylonjs/core";
 import { Engine } from "@babylonjs/core/Engines/engine";
 import { createStorageTexture } from "./utils";
-
 import twiddleFactors from "../shaders/twiddleFactors.wgsl";
 import horizontalStep from "../shaders/horizontalStepIfft.wgsl";
 import verticalStep from "../shaders/verticalStepIfft.wgsl";
 import permutation from "../shaders/permutation.wgsl";
 import { CopyTexture } from "./copyTexture";
+import { ComputeShader } from "@babylonjs/core/Compute/computeShader";
+import { BaseTexture } from "@babylonjs/core/Materials/Textures/baseTexture";
+import { UniformBuffer } from "@babylonjs/core/Materials/uniformBuffer";
+import { Constants } from "@babylonjs/core/Engines/constants";
 
 export class IFFT {
     private readonly engine: Engine;

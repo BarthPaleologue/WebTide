@@ -1,5 +1,8 @@
-import { BaseTexture, ComputeShader, Constants, UniformBuffer } from "@babylonjs/core";
+import { ComputeShader } from "@babylonjs/core/Compute/computeShader";
 import { Engine } from "@babylonjs/core/Engines/engine";
+import { UniformBuffer } from "@babylonjs/core/Materials/uniformBuffer";
+import { BaseTexture } from "@babylonjs/core/Materials/Textures/baseTexture";
+import { Constants } from "@babylonjs/core/Engines/constants";
 
 import copyTexture2 from "../shaders/copyTexture2.wgsl";
 import copyTexture4 from "../shaders/copyTexture4.wgsl";

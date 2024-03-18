@@ -1,8 +1,11 @@
-import { ComputeShader, Constants, UniformBuffer, WebGPUEngine } from "@babylonjs/core";
-
-import spectrumWGSL from "../shaders/baseSpectrum.wgsl";
 import { createGaussianRandomTexture, createStorageTexture } from "./utils";
 import { Texture } from "@babylonjs/core/Materials/Textures/texture";
+import { ComputeShader } from "@babylonjs/core/Compute/computeShader";
+import { UniformBuffer } from "@babylonjs/core/Materials/uniformBuffer";
+import { WebGPUEngine } from "@babylonjs/core/Engines/webgpuEngine";
+import { Constants } from "@babylonjs/core/Engines/constants";
+
+import spectrumWGSL from "../shaders/baseSpectrum.wgsl";
 
 export class BaseSpectrum {
     private computeShader: ComputeShader;
