@@ -4,12 +4,12 @@ import { ComputeShader } from "@babylonjs/core/Compute/computeShader";
 import { UniformBuffer } from "@babylonjs/core/Materials/uniformBuffer";
 import { WebGPUEngine } from "@babylonjs/core/Engines/webgpuEngine";
 import { Constants } from "@babylonjs/core/Engines/constants";
+import { InitialSpectrum } from "./initialSpectrum";
 
 import spectrumWGSL from "../shaders/dynamicSpectrum.wgsl";
-import { Spectrum } from "./spectrum";
 
 export class DynamicSpectrum {
-    private baseSpectrum: Spectrum;
+    private initialSpectrum: InitialSpectrum;
 
     private computeShader: ComputeShader;
 
@@ -19,8 +19,8 @@ export class DynamicSpectrum {
 
     private readonly settings: UniformBuffer;
 
-    constructor(baseSpectrum: Spectrum, engine: WebGPUEngine) {
-        this.baseSpectrum = baseSpectrum;
+    constructor(initialSpectrum: InitialSpectrum, engine: WebGPUEngine) {
+        this.initialSpectrum = initialSpectrum;
 
         this.computeShader = new ComputeShader(
             "computeSpectrum",
@@ -38,9 +38,9 @@ export class DynamicSpectrum {
             }
         );
 
-        this.ht = createStorageTexture("ht", engine, baseSpectrum.textureSize, baseSpectrum.textureSize, Constants.TEXTUREFORMAT_RG);
-        this.dht = createStorageTexture("dht", engine, baseSpectrum.textureSize, baseSpectrum.textureSize, Constants.TEXTUREFORMAT_RG);
-        this.displacement = createStorageTexture("displacement", engine, baseSpectrum.textureSize, baseSpectrum.textureSize, Constants.TEXTUREFORMAT_RG);
+        this.ht = createStorageTexture("ht", engine, initialSpectrum.textureSize, initialSpectrum.textureSize, Constants.TEXTUREFORMAT_RG);
+        this.dht = createStorageTexture("dht", engine, initialSpectrum.textureSize, initialSpectrum.textureSize, Constants.TEXTUREFORMAT_RG);
+        this.displacement = createStorageTexture("displacement", engine, initialSpectrum.textureSize, initialSpectrum.textureSize, Constants.TEXTUREFORMAT_RG);
 
         this.settings = new UniformBuffer(engine);
 
@@ -48,7 +48,7 @@ export class DynamicSpectrum {
         this.settings.addUniform("tileScale", 1);
         this.settings.addUniform("elapsedSeconds", 1);
 
-        this.computeShader.setStorageTexture("H0", this.baseSpectrum.h0);
+        this.computeShader.setStorageTexture("H0", this.initialSpectrum.h0);
         this.computeShader.setTexture("HT", this.ht, false);
         this.computeShader.setTexture("DHT", this.dht, false);
         this.computeShader.setTexture("Displacement", this.displacement, false);
@@ -56,13 +56,13 @@ export class DynamicSpectrum {
     }
 
     generate(elapsedSeconds: number) {
-        this.settings.updateInt("textureSize", this.baseSpectrum.textureSize);
-        this.settings.updateFloat("tileScale", this.baseSpectrum.tileScale);
+        this.settings.updateInt("textureSize", this.initialSpectrum.textureSize);
+        this.settings.updateFloat("tileScale", this.initialSpectrum.tileScale);
         this.settings.updateFloat("elapsedSeconds", elapsedSeconds);
 
         this.settings.update();
 
-        this.computeShader.dispatch(Math.ceil(this.baseSpectrum.textureSize / 8), Math.ceil(this.baseSpectrum.textureSize / 8), 1);
+        this.computeShader.dispatch(Math.ceil(this.initialSpectrum.textureSize / 8), Math.ceil(this.initialSpectrum.textureSize / 8), 1);
     }
 
     dispose() {

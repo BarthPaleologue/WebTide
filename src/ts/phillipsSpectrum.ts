@@ -1,18 +1,18 @@
 import { createGaussianNoiseTexture, createStorageTexture } from "./utils";
-import { Texture } from "@babylonjs/core/Materials/Textures/texture";
 import { ComputeShader } from "@babylonjs/core/Compute/computeShader";
 import { UniformBuffer } from "@babylonjs/core/Materials/uniformBuffer";
 import { WebGPUEngine } from "@babylonjs/core/Engines/webgpuEngine";
 import { Constants } from "@babylonjs/core/Engines/constants";
-import { Spectrum } from "./spectrum";
+import { InitialSpectrum } from "./initialSpectrum";
 
 import spectrumWGSL from "../shaders/phillipsSpectrum.wgsl";
+import { BaseTexture } from "@babylonjs/core/Materials/Textures/baseTexture";
 
-export class PhillipsSpectrum implements Spectrum {
+export class PhillipsSpectrum implements InitialSpectrum {
     private computeShader: ComputeShader;
 
-    readonly gaussianNoise: Texture;
-    readonly h0: Texture;
+    readonly gaussianNoise: BaseTexture;
+    readonly h0: BaseTexture;
 
     private readonly settings: UniformBuffer;
 

@@ -11,23 +11,23 @@ import { BaseTexture } from "@babylonjs/core/Materials/Textures/baseTexture";
 import { WebGPUEngine } from "@babylonjs/core/Engines/webgpuEngine";
 import { Effect } from "@babylonjs/core/Materials/effect";
 import { Constants } from "@babylonjs/core/Engines/constants";
-import { Spectrum } from "./spectrum";
+import { InitialSpectrum } from "./initialSpectrum";
 
 export class WaterMaterial extends ShaderMaterial {
     readonly textureSize: number;
     readonly tileScale: number;
 
-    readonly baseSpectrum: Spectrum;
+    readonly initialSpectrum: InitialSpectrum;
     readonly dynamicSpectrum: DynamicSpectrum;
 
     readonly ifft: IFFT;
-    readonly heightBuffer: BaseTexture;
-    readonly gradientBuffer: BaseTexture;
-    readonly displacementBuffer: BaseTexture;
+    readonly heightMap: BaseTexture;
+    readonly gradientMap: BaseTexture;
+    readonly displacementMap: BaseTexture;
 
     private elapsedSeconds = 3600;
 
-    constructor(name: string, textureSize: number, tileScale: number, scene: Scene, engine: WebGPUEngine, baseSpectrum: Spectrum = new PhillipsSpectrum(textureSize, tileScale, engine)) {
+    constructor(name: string, textureSize: number, tileScale: number, scene: Scene, engine: WebGPUEngine, baseSpectrum: InitialSpectrum = new PhillipsSpectrum(textureSize, tileScale, engine)) {
         if (Effect.ShadersStore["oceanVertexShader"] === undefined) {
             Effect.ShadersStore["oceanVertexShader"] = vertex;
         }
@@ -43,26 +43,30 @@ export class WaterMaterial extends ShaderMaterial {
         this.textureSize = textureSize;
         this.tileScale = tileScale;
 
-        this.baseSpectrum = baseSpectrum;
-        this.dynamicSpectrum = new DynamicSpectrum(this.baseSpectrum, engine);
+        if(baseSpectrum.h0.textureFormat != Constants.TEXTUREFORMAT_RGBA) {
+            throw new Error("The base spectrum must have a texture format of RGBA");
+        }
+
+        this.initialSpectrum = baseSpectrum;
+        this.dynamicSpectrum = new DynamicSpectrum(this.initialSpectrum, engine);
 
         this.ifft = new IFFT(engine, textureSize);
-        this.heightBuffer = createStorageTexture("heightBuffer", engine, textureSize, textureSize, Constants.TEXTUREFORMAT_RG);
-        this.gradientBuffer = createStorageTexture("gradientBuffer", engine, textureSize, textureSize, Constants.TEXTUREFORMAT_RG);
-        this.displacementBuffer = createStorageTexture("displacementBuffer", engine, textureSize, textureSize, Constants.TEXTUREFORMAT_RG);
+        this.heightMap = createStorageTexture("heightBuffer", engine, textureSize, textureSize, Constants.TEXTUREFORMAT_RG);
+        this.gradientMap = createStorageTexture("gradientBuffer", engine, textureSize, textureSize, Constants.TEXTUREFORMAT_RG);
+        this.displacementMap = createStorageTexture("displacementBuffer", engine, textureSize, textureSize, Constants.TEXTUREFORMAT_RG);
 
-        this.setTexture("heightMap", this.heightBuffer);
-        this.setTexture("gradientMap", this.gradientBuffer);
-        this.setTexture("displacementMap", this.displacementBuffer);
+        this.setTexture("heightMap", this.heightMap);
+        this.setTexture("gradientMap", this.gradientMap);
+        this.setTexture("displacementMap", this.displacementMap);
     }
 
     public update(deltaSeconds: number, lightDirection: Vector3) {
         this.elapsedSeconds += deltaSeconds;
         this.dynamicSpectrum.generate(this.elapsedSeconds);
 
-        this.ifft.applyToTexture(this.dynamicSpectrum.ht, this.heightBuffer);
-        this.ifft.applyToTexture(this.dynamicSpectrum.dht, this.gradientBuffer);
-        this.ifft.applyToTexture(this.dynamicSpectrum.displacement, this.displacementBuffer);
+        this.ifft.applyToTexture(this.dynamicSpectrum.ht, this.heightMap);
+        this.ifft.applyToTexture(this.dynamicSpectrum.dht, this.gradientMap);
+        this.ifft.applyToTexture(this.dynamicSpectrum.displacement, this.displacementMap);
 
         const activeCamera = this.getScene().activeCamera;
         if (activeCamera === null) throw new Error("No active camera found");
