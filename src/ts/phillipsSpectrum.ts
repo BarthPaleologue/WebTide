@@ -8,15 +8,25 @@ import { InitialSpectrum } from "./initialSpectrum";
 import spectrumWGSL from "../shaders/phillipsSpectrum.wgsl";
 import { BaseTexture } from "@babylonjs/core/Materials/Textures/baseTexture";
 
+/**
+ * The Phillips spectrum is a common choice for the initial spectrum in ocean simulation.
+ * It is described in Tessendorf's paper "Simulating Ocean Water".
+ * @see https://people.computing.clemson.edu/~jtessen/reports/papers_files/coursenotes2004.pdf
+ */
 export class PhillipsSpectrum implements InitialSpectrum {
     private computeShader: ComputeShader;
 
+    /**
+     * A texture containing random numbers following a gaussian distribution with mean 0 and standard deviation 1.
+     */
     readonly gaussianNoise: BaseTexture;
+
     readonly h0: BaseTexture;
 
     private readonly settings: UniformBuffer;
 
     readonly textureSize;
+
     readonly tileScale;
 
     constructor(textureSize: number, tileScale: number, engine: WebGPUEngine) {

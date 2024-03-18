@@ -10,6 +10,10 @@ import { BaseTexture } from "@babylonjs/core/Materials/Textures/baseTexture";
 import { UniformBuffer } from "@babylonjs/core/Materials/uniformBuffer";
 import { Constants } from "@babylonjs/core/Engines/constants";
 
+/**
+ * The inverse fast fourier transform is the cornerstone of the ocean simulation. It makes it fast enough
+ * to reach real-time performance. Each instance can process textures of a specific size.
+ */
 export class IFFT {
     private readonly engine: Engine;
 

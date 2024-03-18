@@ -12,18 +12,60 @@ import { Effect } from "@babylonjs/core/Materials/effect";
 import { Constants } from "@babylonjs/core/Engines/constants";
 import { InitialSpectrum } from "./initialSpectrum";
 
+/**
+ * The material that makes all the magic happen. Its vertex shader deforms the water mesh according to the height map
+ * computed using IFFT. The fragment shader makes is look like water.
+ */
 export class WaterMaterial extends ShaderMaterial {
+    /**
+     * The size of the textures used in the simulation. Higher values are more accurate but slower to compute.
+     */
     readonly textureSize: number;
+
+    /**
+     * The scale of the ocean tiles. A higher value will make the waves smaller and more frequent.
+     */
     readonly tileScale: number;
 
+    /**
+     * The spectrum describing the simulation at time t=0.
+     */
     readonly initialSpectrum: InitialSpectrum;
+
+    /**
+     * The spectrum describing the simulation at the current time.
+     */
     readonly dynamicSpectrum: DynamicSpectrum;
 
+    /**
+     * The IFFT calculator used to compute the height map, gradient map and displacement map.
+     */
     readonly ifft: IFFT;
+
+    /**
+     * The height map is used to translate vertically the water vertices.
+     * It is computed using the IFFT of the dynamic spectrum.
+     */
     readonly heightMap: BaseTexture;
+
+    /**
+     * The gradient map is used to compute the normals of the water mesh in order to shade it properly.
+     * It is computed using the IFFT of the dynamic spectrum.
+     */
     readonly gradientMap: BaseTexture;
+
+    /**
+     * The displacement map is used to achieve the "Choppy waves" effect described in Tessendorf's paper.
+     * It helps to make sharper wave crests and smoother troughs.
+     * It is computed using the IFFT of the dynamic spectrum.
+     */
     readonly displacementMap: BaseTexture;
 
+    /**
+     * The elapsed time in seconds since the simulation started.
+     * Starting at 0 creates some visual artefacts, so we start at 1 hour to avoid them.
+     * @private
+     */
     private elapsedSeconds = 3600;
 
     constructor(name: string, initialSpectrum: InitialSpectrum, scene: Scene, engine: WebGPUEngine) {
@@ -59,6 +101,12 @@ export class WaterMaterial extends ShaderMaterial {
         this.setTexture("displacementMap", this.displacementMap);
     }
 
+    /**
+     * Update the material with the new state of the ocean simulation.
+     * IFFT will be used to compute the height map, gradient map and displacement map for the current time.
+     * @param deltaSeconds The time elapsed since the last update in seconds
+     * @param lightDirection The direction of the light in the scene
+     */
     public update(deltaSeconds: number, lightDirection: Vector3) {
         this.elapsedSeconds += deltaSeconds;
         this.dynamicSpectrum.generate(this.elapsedSeconds);
