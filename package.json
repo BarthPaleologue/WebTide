@@ -1,0 +1,40 @@
+{
+  "devDependencies": {
+    "@babylonjs/core": "^6.45.1",
+    "@typescript-eslint/eslint-plugin": "^5.62.0",
+    "@typescript-eslint/parser": "^5.62.0",
+    "@webpack-cli/generators": "^3.0.7",
+    "css-loader": "^6.10.0",
+    "eslint": "^8.57.0",
+    "eslint-plugin-import": "^2.29.1",
+    "html-loader": "^4.2.0",
+    "html-webpack-plugin": "^5.6.0",
+    "mini-css-extract-plugin": "^2.8.1",
+    "prettier": "^2.8.8",
+    "raw-loader": "^4.0.2",
+    "sass": "^1.71.1",
+    "sass-loader": "^13.3.3",
+    "style-loader": "^3.3.4",
+    "ts-loader": "^9.5.1",
+    "ts-node": "^10.9.2",
+    "ts-shader-loader": "^2.0.2",
+    "typescript": "^4.9.5",
+    "typescript-plugin-css-modules": "^4.2.3",
+    "webpack": "^5.90.3",
+    "webpack-cli": "^5.1.4",
+    "webpack-dev-server": "^4.15.1"
+  },
+  "version": "1.0.0",
+  "description": "BabylonJS template with webpack and Typescript",
+  "name": "babylonjs-template",
+  "scripts": {
+    "build": "webpack --mode=production --node-env=production",
+    "build:dev": "webpack --mode=development",
+    "build:prod": "webpack --mode=production --node-env=production",
+    "watch": "webpack --watch",
+    "serve": "webpack serve",
+    "format": "prettier --config .prettierrc 'src/**/*.ts' --write",
+    "lint:check": "eslint src/ts",
+    "lint:fix": "eslint src/ts --fix"
+  }
+}
