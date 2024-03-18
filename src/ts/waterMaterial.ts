@@ -75,4 +75,14 @@ export class WaterMaterial extends ShaderMaterial {
         this.setFloat("tileScale", this.tileScale);
         this.setVector3("lightDirection", lightDirection);
     }
+
+    public dispose(forceDisposeEffect?: boolean, forceDisposeTextures?: boolean, notBoundToMesh?: boolean) {
+        this.dynamicSpectrum.dispose();
+        this.ifft.dispose();
+        this.heightMap.dispose();
+        this.gradientMap.dispose();
+        this.displacementMap.dispose();
+
+        super.dispose(forceDisposeEffect, forceDisposeTextures, notBoundToMesh);
+    }
 }
