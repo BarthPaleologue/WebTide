@@ -5,7 +5,7 @@ import { createGaussianRandomTexture, createStorageTexture } from "./utils";
 import { Texture } from "@babylonjs/core/Materials/Textures/texture";
 
 export class BaseSpectrum {
-    private cs: ComputeShader;
+    private computeShader: ComputeShader;
 
     readonly noise: Texture;
     h0: Texture;
@@ -19,7 +19,7 @@ export class BaseSpectrum {
     constructor(textureSize: number, engine: WebGPUEngine) {
         this.textureSize = textureSize;
 
-        this.cs = new ComputeShader("computeSpectrum", engine, { computeSource: spectrumWGSL }, {
+        this.computeShader = new ComputeShader("computeSpectrum", engine, { computeSource: spectrumWGSL }, {
             bindingsMapping: {
                 "H0K": { group: 0, binding: 0 },
                 "Noise": { group: 0, binding: 1 },
@@ -37,9 +37,9 @@ export class BaseSpectrum {
         this.settings.addUniform("Size", 1);
         this.settings.addUniform("LengthScale", 1);
 
-        this.cs.setStorageTexture("H0K", this.h0k);
-        this.cs.setTexture("Noise", this.noise, false);
-        this.cs.setUniformBuffer("params", this.settings);
+        this.computeShader.setStorageTexture("H0K", this.h0k);
+        this.computeShader.setTexture("Noise", this.noise, false);
+        this.computeShader.setUniformBuffer("params", this.settings);
     }
 
     generate() {
@@ -48,6 +48,6 @@ export class BaseSpectrum {
 
         this.settings.update();
 
-        this.cs.dispatch(Math.ceil(this.textureSize / 8), Math.ceil(this.textureSize / 8), 1);
+        this.computeShader.dispatch(Math.ceil(this.textureSize / 8), Math.ceil(this.textureSize / 8), 1);
     }
 }
