@@ -54,8 +54,9 @@ const ht = createTexturedPlane(dynamicSpectrum.ht, scene);
 ht.position.z -= 1;
 
 const ifft = new IFFT(engine, textureSize);
-const heightBuffer = createStorageTexture("buffer", engine, textureSize, textureSize, Constants.TEXTUREFORMAT_RG);
+const heightBuffer = createStorageTexture("heightBuffer", engine, textureSize, textureSize, Constants.TEXTUREFORMAT_RG);
 const gradientBuffer = createStorageTexture("gradientBuffer", engine, textureSize, textureSize, Constants.TEXTUREFORMAT_RG);
+const displacementBuffer = createStorageTexture("displacementBuffer", engine, textureSize, textureSize, Constants.TEXTUREFORMAT_RG);
 
 const twiddle = createTexturedPlane(heightBuffer, scene);
 twiddle.position.x -= 1;
@@ -64,8 +65,9 @@ twiddle.position.x -= 1;
 const waterMaterial = new WaterMaterial("waterMaterial", scene);
 waterMaterial.setTexture("heightMap", heightBuffer);
 waterMaterial.setTexture("gradientMap", gradientBuffer);
+waterMaterial.setTexture("displacementMap", displacementBuffer);
 
-const radius = 1;
+const radius = 2;
 const tileSize = 10;
 for(let x = -radius; x <= radius; x++) {
     for(let z = -radius; z <= radius; z++) {
@@ -88,6 +90,7 @@ function updateScene() {
 
     ifft.applyToTexture(dynamicSpectrum.ht, heightBuffer);
     ifft.applyToTexture(dynamicSpectrum.dht, gradientBuffer);
+    ifft.applyToTexture(dynamicSpectrum.displacement, displacementBuffer);
 
     waterMaterial.setFloat("tileScale", tileScale);
     waterMaterial.setVector3("cameraPositionW", camera.globalPosition);

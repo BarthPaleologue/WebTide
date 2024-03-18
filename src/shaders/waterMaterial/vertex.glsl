@@ -9,6 +9,7 @@ uniform mat4 worldViewProjection;
 
 uniform sampler2D heightMap;
 uniform sampler2D gradientMap;
+uniform sampler2D displacementMap;
 
 uniform float tileScale;
 
@@ -16,10 +17,6 @@ varying vec3 vNormalW;
 varying vec2 vUV;
 varying vec3 vPosition;
 varying vec3 vPositionW;
-
-float sampleHeight(vec2 point) {
-    return texture(heightMap, point).r / 100000.0;
-}
 
 vec3 sampleHeightAndGradient(vec2 point) {
     float height = texture(heightMap, point).r;
@@ -32,13 +29,10 @@ vec3 sampleHeightAndGradient(vec2 point) {
 
 void main(void) {
     vec3 waterPosition = position;
-    /*float height = sampleHeight(uv);
-    waterPosition.y = height;
 
-    // normal using central difference
-    float dx = sampleHeight(uv + vec2(0.01, 0.0)) - sampleHeight(uv - vec2(0.01, 0.0));
-    float dy = sampleHeight(uv + vec2(0.0, 0.01)) - sampleHeight(uv - vec2(0.0, 0.01));
-    vec3 normal = normalize(vec3(-dx, 0.02, -dy));*/
+    vec2 displacement = texture(displacementMap, uv).rg / 100000.0;
+    waterPosition.x += displacement.x;
+    waterPosition.z += displacement.y;
 
     vec3 heightAndGradient = sampleHeightAndGradient(uv);
     waterPosition.y = heightAndGradient.x;

@@ -3,6 +3,7 @@ const PI : f32 = 3.1415926;
 @group(0) @binding(0) var H0: texture_2d<f32>;
 @group(0) @binding(1) var HT: texture_storage_2d<rg32float, write>;
 @group(0) @binding(2) var DHT: texture_storage_2d<rg32float, write>;
+@group(0) @binding(3) var Displacement: texture_storage_2d<rg32float, write>;
 
 struct Params {
     Size: u32,
@@ -10,7 +11,7 @@ struct Params {
     ElapsedSeconds: f32,
 };
 
-@group(0) @binding(3) var<uniform> params: Params;
+@group(0) @binding(4) var<uniform> params: Params;
 
 fn omega(k: vec2<f32>) -> f32 {
     return sqrt(length(k) * 9.81);
@@ -39,6 +40,10 @@ fn computeSpectrum(@builtin(global_invocation_id) id: vec3<u32>) {
 
 	let ikh = complexMult(k, ih);
 
-    textureStore(HT, iid.xy, vec4<f32>(h.x, h.y, 0.0, 0.0));
-    textureStore(DHT, iid.xy, vec4<f32>(ikh.x, ikh.y, 0.0, 0.0));
+    // in the paper there is a minus sign here, i don't know why I need to remove it
+	let displacement = ikh / (length(k) + 0.001);
+
+    textureStore(HT, iid.xy, vec4<f32>(h, vec2(0.0)));
+    textureStore(DHT, iid.xy, vec4<f32>(ikh, vec2(0.0)));
+    textureStore(Displacement, iid.xy, vec4<f32>(displacement, vec2(0.0)));
 }
