@@ -41,7 +41,7 @@ camera.lowerRadiusLimit = 2;
 camera.upperBetaLimit = 3.14 / 2;
 camera.attachControl();
 
-const light = new DirectionalLight("light", new Vector3(1, -1, 2).normalize(), scene);
+const light = new DirectionalLight("light", new Vector3(1, -1, 3).normalize(), scene);
 
 const textureSize = 256;
 const tileScale = 1000;
