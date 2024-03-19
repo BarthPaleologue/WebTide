@@ -42,7 +42,7 @@ void main() {
 
     float specular = pow(max(0.0, dot(reflect(-lightDirection, normal), viewRayW)), 720.0) * 210.0;
 
-    vec3 finalColor = mix(diffuseColor * ndl, reflectedColor, fresnel) + specular;
+    vec3 finalColor = mix(diffuseColor * ndl, reflectedColor + specular, fresnel);
 
     gl_FragColor = vec4(finalColor, 1.0);
 }
