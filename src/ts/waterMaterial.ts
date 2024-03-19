@@ -7,7 +7,6 @@ import { DynamicSpectrum } from "./dynamicSpectrum";
 import { Vector3 } from "@babylonjs/core/Maths/math.vector";
 import { ShaderMaterial } from "@babylonjs/core/Materials/shaderMaterial";
 import { BaseTexture } from "@babylonjs/core/Materials/Textures/baseTexture";
-import { WebGPUEngine } from "@babylonjs/core/Engines/webgpuEngine";
 import { Effect } from "@babylonjs/core/Materials/effect";
 import { Constants } from "@babylonjs/core/Engines/constants";
 import { InitialSpectrum } from "./initialSpectrum";
@@ -19,6 +18,7 @@ import TropicalSunnyDay_pz from "../assets/skybox/TropicalSunnyDay_pz.jpg";
 import TropicalSunnyDay_nx from "../assets/skybox/TropicalSunnyDay_nx.jpg";
 import TropicalSunnyDay_ny from "../assets/skybox/TropicalSunnyDay_ny.jpg";
 import TropicalSunnyDay_nz from "../assets/skybox/TropicalSunnyDay_nz.jpg";
+import { DepthRenderer, RenderTargetTexture } from "@babylonjs/core";
 
 /**
  * The material that makes all the magic happen. Its vertex shader deforms the water mesh according to the height map
@@ -71,6 +71,10 @@ export class WaterMaterial extends ShaderMaterial {
      */
     readonly displacementMap: BaseTexture;
 
+    readonly depthRenderer: DepthRenderer;
+
+    readonly screenRenderTarget: RenderTargetTexture;
+
     /**
      * The elapsed time in seconds since the simulation started.
      * Starting at 0 creates some visual artefacts, so we start at 1 hour to avoid them.
@@ -78,7 +82,7 @@ export class WaterMaterial extends ShaderMaterial {
      */
     private elapsedSeconds = 3600;
 
-    constructor(name: string, initialSpectrum: InitialSpectrum, scene: Scene, engine: WebGPUEngine) {
+    constructor(name: string, initialSpectrum: InitialSpectrum, scene: Scene) {
         if (Effect.ShadersStore["oceanVertexShader"] === undefined) {
             Effect.ShadersStore["oceanVertexShader"] = vertex;
         }
@@ -88,8 +92,16 @@ export class WaterMaterial extends ShaderMaterial {
         super(name, scene, "ocean", {
             attributes: ["position", "normal", "uv"],
             uniforms: ["world", "worldView", "worldViewProjection", "view", "projection", "cameraPositionW", "lightDirection"],
-            samplers: ["heightMap", "gradientMap", "displacementMap", "reflectionSampler"]
+            samplers: ["heightMap", "gradientMap", "displacementMap", "reflectionSampler", "depthSampler", "textureSampler"]
         });
+        this.depthRenderer = scene.enableDepthRenderer();
+        this.setTexture("depthSampler", this.depthRenderer.getDepthMap());
+
+        // create render target texture
+        this.screenRenderTarget = new RenderTargetTexture("screenTexture", { ratio: scene.getEngine().getRenderWidth() / scene.getEngine().getRenderHeight() }, scene);
+        scene.customRenderTargets.push(this.screenRenderTarget);
+
+        this.setTexture("textureSampler", this.screenRenderTarget);
 
         this.reflectionTexture = new CubeTexture("", scene, null, false, [
             TropicalSunnyDay_px, TropicalSunnyDay_py, TropicalSunnyDay_pz,
@@ -98,7 +110,7 @@ export class WaterMaterial extends ShaderMaterial {
         //this.reflectionTexture.coordinatesMode = Constants.TEXTURE_CUBE_MAP;
         this.setTexture("reflectionSampler", this.reflectionTexture);
 
-        if(initialSpectrum.h0.textureFormat != Constants.TEXTUREFORMAT_RGBA) {
+        if (initialSpectrum.h0.textureFormat != Constants.TEXTUREFORMAT_RGBA) {
             throw new Error("The base spectrum must have a texture format of RGBA");
         }
 
@@ -106,12 +118,12 @@ export class WaterMaterial extends ShaderMaterial {
         this.tileScale = initialSpectrum.tileScale;
 
         this.initialSpectrum = initialSpectrum;
-        this.dynamicSpectrum = new DynamicSpectrum(this.initialSpectrum, engine);
+        this.dynamicSpectrum = new DynamicSpectrum(this.initialSpectrum, scene.getEngine());
 
-        this.ifft = new IFFT(engine, this.textureSize);
-        this.heightMap = createStorageTexture("heightBuffer", engine, this.textureSize, this.textureSize, Constants.TEXTUREFORMAT_RG);
-        this.gradientMap = createStorageTexture("gradientBuffer", engine, this.textureSize, this.textureSize, Constants.TEXTUREFORMAT_RG);
-        this.displacementMap = createStorageTexture("displacementBuffer", engine, this.textureSize, this.textureSize, Constants.TEXTUREFORMAT_RG);
+        this.ifft = new IFFT(scene.getEngine(), this.textureSize);
+        this.heightMap = createStorageTexture("heightBuffer", scene.getEngine(), this.textureSize, this.textureSize, Constants.TEXTUREFORMAT_RG);
+        this.gradientMap = createStorageTexture("gradientBuffer", scene.getEngine(), this.textureSize, this.textureSize, Constants.TEXTUREFORMAT_RG);
+        this.displacementMap = createStorageTexture("displacementBuffer", scene.getEngine(), this.textureSize, this.textureSize, Constants.TEXTUREFORMAT_RG);
 
         this.setTexture("heightMap", this.heightMap);
         this.setTexture("gradientMap", this.gradientMap);
@@ -127,6 +139,11 @@ export class WaterMaterial extends ShaderMaterial {
     public update(deltaSeconds: number, lightDirection: Vector3) {
         this.elapsedSeconds += deltaSeconds;
         this.dynamicSpectrum.generate(this.elapsedSeconds);
+
+        const allNonWaterMeshes = this.getScene().meshes.filter(mesh => mesh.material !== this);
+
+        this.depthRenderer.getDepthMap().renderList = allNonWaterMeshes;
+        this.screenRenderTarget.renderList = allNonWaterMeshes;
 
         this.ifft.applyToTexture(this.dynamicSpectrum.ht, this.heightMap);
         this.ifft.applyToTexture(this.dynamicSpectrum.dht, this.gradientMap);

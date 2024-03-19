@@ -46,8 +46,9 @@ const light = new DirectionalLight("light", new Vector3(1, -1, 3).normalize(), s
 const textureSize = 256;
 const tileScale = 1000;
 
+const depthRenderer = scene.enableDepthRenderer(camera);
 const initialSpectrum = new PhillipsSpectrum(textureSize, tileScale, engine);
-const waterMaterial = new WaterMaterial("waterMaterial", initialSpectrum, scene, engine);
+const waterMaterial = new WaterMaterial("waterMaterial", initialSpectrum, scene);
 
 const skybox = MeshBuilder.CreateBox("skyBox", { size: camera.maxZ / 2 }, scene);
 const skyboxMaterial = new StandardMaterial("skyBox", scene);
@@ -83,8 +84,6 @@ for (let x = -radius; x <= radius; x++) {
         water.position.z = z * tileSize;
     }
 }
-
-const depthRenderer = scene.enableDepthRenderer(camera);
 
 Effect.ShadersStore[`PostProcess1FragmentShader`] = postProcessCode;
 const postProcess = new PostProcess("postProcess1", "PostProcess1", ["cameraInverseView", "cameraInverseProjection", "cameraPosition"], ["textureSampler", "depthSampler"], 1, camera, Texture.BILINEAR_SAMPLINGMODE, engine);

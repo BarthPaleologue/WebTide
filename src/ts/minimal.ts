@@ -28,7 +28,7 @@ const textureSize = 512;
 const tileScale = 1000;
 
 const initialSpectrum = new PhillipsSpectrum(textureSize, tileScale, engine);
-const waterMaterial = new WaterMaterial("waterMaterial", initialSpectrum, scene, engine);
+const waterMaterial = new WaterMaterial("waterMaterial", initialSpectrum, scene);
 
 const water = MeshBuilder.CreateGround(
     "water",

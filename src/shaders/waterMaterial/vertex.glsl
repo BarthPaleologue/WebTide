@@ -15,6 +15,7 @@ varying vec3 vNormalW;
 varying vec2 vUV;
 varying vec3 vPosition;
 varying vec3 vPositionW;
+varying vec4 vPositionClip;
 
 const float scalingFactor = 1e-5;
 
@@ -23,7 +24,7 @@ vec3 sampleHeightAndGradient(vec2 point) {
     vec2 gradient = texture(gradientMap, point).rg;
     vec3 heightAndGradient = vec3(height, gradient);
 
-    return heightAndGradient * scalingFactor * 0.8;
+    return heightAndGradient * scalingFactor * 0.05;
 }
 
 void main() {
@@ -41,5 +42,7 @@ void main() {
     vPositionW = vec3(world * vec4(waterPosition, 1.0));
     vNormalW = vec3(world * vec4(normal, 0.0));
     vUV = uv;
-    gl_Position = worldViewProjection * vec4(waterPosition, 1.0);
+    vPositionClip = worldViewProjection * vec4(waterPosition, 1.0);
+
+    gl_Position = vPositionClip;
 }
