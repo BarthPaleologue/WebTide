@@ -25,7 +25,7 @@ const canvas = document.getElementById("renderer") as HTMLCanvasElement;
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
-const engine = new WebGPUEngine(canvas);
+const engine = new WebGPUEngine(canvas, { antialias: true });
 engine.loadingScreen.displayLoadingUI();
 await engine.initAsync();
 
