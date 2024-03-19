@@ -4,7 +4,7 @@ import twiddleFactors from "../shaders/twiddleFactors.wgsl";
 import horizontalStep from "../shaders/horizontalStepIfft.wgsl";
 import verticalStep from "../shaders/verticalStepIfft.wgsl";
 import permutation from "../shaders/permutation.wgsl";
-import { CopyTexture } from "./copyTexture";
+import { CopyComputeShader } from "./copyComputeShader";
 import { ComputeShader } from "@babylonjs/core/Compute/computeShader";
 import { BaseTexture } from "@babylonjs/core/Materials/Textures/baseTexture";
 import { UniformBuffer } from "@babylonjs/core/Materials/uniformBuffer";
@@ -27,6 +27,8 @@ export class IFFT {
     private readonly verticalStepIFFT: ComputeShader;
 
     private readonly permutation: ComputeShader;
+
+    private readonly copyComputeShader: CopyComputeShader;
 
     constructor(engine: Engine, textureSize: number) {
         this.engine = engine;
@@ -110,6 +112,8 @@ export class IFFT {
                 entryPoint: "permute"
             }
         );
+
+        this.copyComputeShader = new CopyComputeShader(this.engine);
     }
 
     /**
@@ -147,7 +151,7 @@ export class IFFT {
         }
 
         if (pingPong) {
-            CopyTexture.Copy(output, input, this.engine);
+            this.copyComputeShader.makeCopy(output, input);
         }
 
         this.permutation.setTexture("InputBuffer", input, false);
@@ -155,7 +159,7 @@ export class IFFT {
 
         this.permutation.dispatch(Math.ceil(this.textureSize / 8), Math.ceil(this.textureSize / 8), 1);
 
-        CopyTexture.Copy(output, input, this.engine);
+        this.copyComputeShader.makeCopy(output, input);
     }
 
     public dispose(): void {
