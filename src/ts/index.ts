@@ -15,6 +15,8 @@ import { Texture } from "@babylonjs/core/Materials/Textures/texture";
 import { PostProcess } from "@babylonjs/core/PostProcesses/postProcess";
 import { Effect } from "@babylonjs/core/Materials/effect";
 
+import "@babylonjs/core/Rendering/depthRendererSceneComponent";
+
 import postProcessCode from "../shaders/smallPostProcess.glsl";
 
 const canvas = document.getElementById("renderer") as HTMLCanvasElement;
@@ -39,13 +41,13 @@ camera.attachControl();
 
 const light = new DirectionalLight("light", new Vector3(1, -1, 2).normalize(), scene);
 
-const textureSize = 512;
+const textureSize = 256;
 const tileScale = 1000;
 
 const initialSpectrum = new PhillipsSpectrum(textureSize, tileScale, engine);
 const waterMaterial = new WaterMaterial("waterMaterial", initialSpectrum, scene, engine);
 
-const skybox = MeshBuilder.CreateBox("skyBox", {size:1000.0}, scene);
+const skybox = MeshBuilder.CreateBox("skyBox", { size: camera.maxZ / 2 }, scene);
 const skyboxMaterial = new StandardMaterial("skyBox", scene);
 skyboxMaterial.backFaceCulling = false;
 skyboxMaterial.reflectionTexture = waterMaterial.reflectionTexture;
@@ -68,9 +70,15 @@ for (let x = -radius; x <= radius; x++) {
     }
 }
 
+const depthRenderer = scene.enableDepthRenderer(camera);
 
 Effect.ShadersStore[`PostProcess1FragmentShader`] = postProcessCode;
-const postProcess = new PostProcess("postProcess1", "PostProcess1", [], ["textureSampler"], 1, camera, Texture.BILINEAR_SAMPLINGMODE, engine);
+const postProcess = new PostProcess("postProcess1", "PostProcess1", ["cameraInverseView", "cameraInverseProjection", "cameraPosition"], ["textureSampler", "depthSampler"], 1, camera, Texture.BILINEAR_SAMPLINGMODE, engine);
+postProcess.onApplyObservable.add((effect) => {
+    effect.setTexture("depthSampler", depthRenderer.getDepthMap());
+    effect.setMatrix("cameraInverseView", camera.getViewMatrix().clone().invert());
+    effect.setMatrix("cameraInverseProjection", camera.getProjectionMatrix().clone().invert());
+});
 
 function updateScene() {
     const deltaSeconds = engine.getDeltaTime() / 1000;

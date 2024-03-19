@@ -3,6 +3,23 @@ precision highp float;
 varying vec2 vUV;
 
 uniform sampler2D textureSampler;
+uniform sampler2D depthSampler;
+
+uniform mat4 cameraInverseProjection;
+uniform mat4 cameraInverseView;
+uniform vec3 cameraPosition;
+
+// compute the world position of a pixel from its uv coordinates
+// This is an evolution from the code found here
+// https://forum.babylonjs.com/t/pixel-position-in-world-space-from-fragment-postprocess-shader-issue/30232
+// also see https://www.babylonjs-playground.com/#1PHYB0#318 for smaller scale testing
+// This is a revised version that works with the reverse depth buffer
+vec3 worldFromUV(vec2 pos, mat4 inverseProjection, mat4 inverseView) {
+    vec4 ndc = vec4(pos.xy * 2.0 - 1.0, 1.0, 1.0); // get ndc position (z = 1 because the depth buffer is reversed)
+    vec4 posVS = inverseProjection * ndc; // unproject the ndc coordinates : we are now in view space if i understand correctly
+    vec4 posWS = inverseView * posVS; // then we use inverse view to get to world space, division by w to get actual coordinates
+    return  posWS.xyz / posWS.w;
+}
 
 vec3 aces_tonemap(vec3 color) {
     mat3 m1 = mat3(
@@ -21,8 +38,27 @@ vec3 aces_tonemap(vec3 color) {
     return pow(clamp(m2 * (a / b), 0.0, 1.0), vec3(1.0 / 2.2));
 }
 
+float getFogFactor(float d, vec3 rayDir) {
+    const float LOG2 = 1.442695;
+    const float density = 1000.0;
+    const float start = 0.0;
+    const float end = 1.0;
+    float fogFactor = exp2(-density * density * d * d * LOG2);
+    fogFactor = 1.0 - clamp((fogFactor - start) / (end - start), 0.0, 1.0);
+
+    fogFactor *= pow(1.0 - abs(dot(rayDir, vec3(0.0, 1.0, 0.0))), 4.0); // fog is not applied to the sky (upwards direction
+
+    return fogFactor;
+}
+
 void main() {
-    vec3 color = texture2D(textureSampler, vUV).rgb;
+    vec3 color = texture(textureSampler, vUV).rgb;
+    float depth = texture(depthSampler, vUV).r;
+
+    vec3 rayDir = normalize(worldFromUV(vUV, cameraInverseProjection, cameraInverseView) - cameraPosition);
+
+    float fogFactor = getFogFactor(depth, rayDir);
+    vec3 fogColor = 1.8 * vec3(63.0, 101.0, 157.0) / 255.0;
 
     //color = aces_tonemap(color);
 
@@ -40,6 +76,8 @@ void main() {
     vec3 grayscale = vec3(0.299, 0.587, 0.114) * color;
     color = mix(grayscale, color, saturation);
     color = clamp(color, 0.0, 1.0);
+
+    color = mix(color, fogColor, fogFactor);
 
     gl_FragColor = vec4(color, 1.0);
 }

@@ -12,7 +12,6 @@ uniform vec3 lightDirection;
 uniform samplerCube reflectionSampler;
 
 void main() {
-    float dist = length(vPosition - cameraPositionW);
     vec3 normal = vNormalW;
 
     float ndl = max(0.0, dot(normal, lightDirection));
