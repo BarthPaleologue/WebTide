@@ -1,9 +1,9 @@
 import { Engine } from "@babylonjs/core/Engines/engine";
 import { createStorageTexture } from "./utils";
-import twiddleFactors from "../shaders/twiddleFactors.wgsl";
-import horizontalStep from "../shaders/horizontalStepIfft.wgsl";
-import verticalStep from "../shaders/verticalStepIfft.wgsl";
-import permutation from "../shaders/permutation.wgsl";
+import twiddleFactors from "../../shaders/twiddleFactors.wgsl";
+import horizontalStep from "../../shaders/horizontalStepIfft.wgsl";
+import verticalStep from "../../shaders/verticalStepIfft.wgsl";
+import permutation from "../../shaders/permutation.wgsl";
 import { CopyComputeShader } from "./copyComputeShader";
 import { ComputeShader } from "@babylonjs/core/Compute/computeShader";
 import { BaseTexture } from "@babylonjs/core/Materials/Textures/baseTexture";

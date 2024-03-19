@@ -1,11 +1,11 @@
-import { createGaussianNoiseTexture, createStorageTexture } from "./utils";
+import { createGaussianNoiseTexture, createStorageTexture } from "../utils/utils";
 import { ComputeShader } from "@babylonjs/core/Compute/computeShader";
 import { UniformBuffer } from "@babylonjs/core/Materials/uniformBuffer";
 import { WebGPUEngine } from "@babylonjs/core/Engines/webgpuEngine";
 import { Constants } from "@babylonjs/core/Engines/constants";
 import { InitialSpectrum } from "./initialSpectrum";
 
-import spectrumWGSL from "../shaders/phillipsSpectrum.wgsl";
+import spectrumWGSL from "../../shaders/phillipsSpectrum.wgsl";
 import { BaseTexture } from "@babylonjs/core/Materials/Textures/baseTexture";
 
 /**

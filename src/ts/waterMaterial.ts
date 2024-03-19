@@ -1,15 +1,15 @@
 import fragment from "../shaders/waterMaterial/fragment.glsl";
 import vertex from "../shaders/waterMaterial/vertex.glsl";
 import { Scene } from "@babylonjs/core/scene";
-import { IFFT } from "./IFFT";
-import { createStorageTexture } from "./utils";
-import { DynamicSpectrum } from "./dynamicSpectrum";
+import { IFFT } from "./utils/IFFT";
+import { createStorageTexture } from "./utils/utils";
+import { DynamicSpectrum } from "./spectrum/dynamicSpectrum";
 import { Vector3 } from "@babylonjs/core/Maths/math.vector";
 import { ShaderMaterial } from "@babylonjs/core/Materials/shaderMaterial";
 import { BaseTexture } from "@babylonjs/core/Materials/Textures/baseTexture";
 import { Effect } from "@babylonjs/core/Materials/effect";
 import { Constants } from "@babylonjs/core/Engines/constants";
-import { InitialSpectrum } from "./initialSpectrum";
+import { InitialSpectrum } from "./spectrum/initialSpectrum";
 import { CubeTexture } from "@babylonjs/core/Materials/Textures/cubeTexture";
 
 import TropicalSunnyDay_px from "../assets/skybox/TropicalSunnyDay_px.jpg";

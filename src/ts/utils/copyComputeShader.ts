@@ -3,7 +3,7 @@ import { Engine } from "@babylonjs/core/Engines/engine";
 import { UniformBuffer } from "@babylonjs/core/Materials/uniformBuffer";
 import { BaseTexture } from "@babylonjs/core/Materials/Textures/baseTexture";
 
-import copyTexture2 from "../shaders/copyTexture2.wgsl";
+import copyTexture2 from "../../shaders/copyTexture2.wgsl";
 
 export class CopyComputeShader {
     readonly computeShader: ComputeShader;

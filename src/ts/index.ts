@@ -9,7 +9,7 @@ import { ArcRotateCamera } from "@babylonjs/core/Cameras/arcRotateCamera";
 import { DirectionalLight } from "@babylonjs/core/Lights/directionalLight";
 
 import { WaterMaterial } from "./waterMaterial";
-import { PhillipsSpectrum } from "./phillipsSpectrum";
+import { PhillipsSpectrum } from "./spectrum/phillipsSpectrum";
 import { StandardMaterial } from "@babylonjs/core/Materials/standardMaterial";
 import { Texture } from "@babylonjs/core/Materials/Textures/texture";
 import { PostProcess } from "@babylonjs/core/PostProcesses/postProcess";

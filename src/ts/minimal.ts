@@ -8,7 +8,7 @@ import { ArcRotateCamera } from "@babylonjs/core/Cameras/arcRotateCamera";
 import { DirectionalLight } from "@babylonjs/core/Lights/directionalLight";
 
 import { WaterMaterial } from "./waterMaterial";
-import { PhillipsSpectrum } from "./phillipsSpectrum";
+import { PhillipsSpectrum } from "./spectrum/phillipsSpectrum";
 
 const canvas = document.getElementById("renderer") as HTMLCanvasElement;
 canvas.width = window.innerWidth;

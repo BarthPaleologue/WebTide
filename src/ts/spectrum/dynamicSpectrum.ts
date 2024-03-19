@@ -1,11 +1,11 @@
-import { createStorageTexture } from "./utils";
+import { createStorageTexture } from "../utils/utils";
 import { Texture } from "@babylonjs/core/Materials/Textures/texture";
 import { ComputeShader } from "@babylonjs/core/Compute/computeShader";
 import { UniformBuffer } from "@babylonjs/core/Materials/uniformBuffer";
 import { Constants } from "@babylonjs/core/Engines/constants";
 import { InitialSpectrum } from "./initialSpectrum";
 
-import spectrumWGSL from "../shaders/dynamicSpectrum.wgsl";
+import spectrumWGSL from "../../shaders/dynamicSpectrum.wgsl";
 import { Engine } from "@babylonjs/core/Engines/engine";
 
 export class DynamicSpectrum {
