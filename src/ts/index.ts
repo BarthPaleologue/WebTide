@@ -62,7 +62,7 @@ const groundMaterial = new StandardMaterial("groundMaterial", scene);
 groundMaterial.diffuseTexture = new Texture(sandTexture, scene);
 groundMaterial.specularColor.scaleInPlace(0);
 
-const radius = 2;
+const radius = 3;
 const tileSize = 10;
 
 const ground = MeshBuilder.CreateGround("ground", {

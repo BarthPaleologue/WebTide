@@ -24,7 +24,7 @@ void main() {
     float surfaceDepth = vPositionClip.z;
     float backgroundDepth = texture2D(depthSampler, screenUV).r;
 
-    float distanceThroughWater = max(backgroundDepth - surfaceDepth, 0.0);
+    float distanceThroughWater = max(surfaceDepth - backgroundDepth, 0.0);
 
     float ndl = max(0.0, dot(normal, -lightDirection));
     vec3 diffuseColor = vec3(0.011126082368383245, 0.05637409755197975, 0.09868919754109445);

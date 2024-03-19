@@ -65,7 +65,7 @@ void main() {
     const float exposure = 1.0;
     const float contrast = 1.0;
     const float brightness = 0.0;
-    const float saturation = 1.0;
+    const float saturation = 1.3;
 
     color *= exposure;
     color = clamp(color, 0.0, 1.0);
