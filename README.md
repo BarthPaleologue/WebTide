@@ -1,10 +1,12 @@
-# BabylonJS Template
+# WebTide
 
 [![NodeJS with Webpack](https://github.com/BarthPaleologue/babylonjs-template/actions/workflows/webpack.yml/badge.svg)](https://github.com/BarthPaleologue/babylonjs-template/actions/workflows/webpack.yml)
 
-A simple template to quick start a BabylonJS project with a working webpack config out of the box and prettier and eslint.
+![img.png](cover.png)
 
-This project has been created using **webpack-cli**, you can now run
+Ocean simulation based on Tessendorf's paper, implemented on WebGPU with BabylonJS.
+
+## Build
 
 ```
 npm run build
