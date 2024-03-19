@@ -40,7 +40,7 @@ vec3 aces_tonemap(vec3 color) {
 
 float getFogFactor(float d, vec3 rayDir) {
     const float LOG2 = 1.442695;
-    const float density = 1000.0;
+    const float density = 400.0;
     const float start = 0.0;
     const float end = 1.0;
     float fogFactor = exp2(-density * density * d * d * LOG2);
@@ -58,7 +58,7 @@ void main() {
     vec3 rayDir = normalize(worldFromUV(vUV, cameraInverseProjection, cameraInverseView) - cameraPosition);
 
     float fogFactor = getFogFactor(depth, rayDir);
-    vec3 fogColor = 1.8 * vec3(63.0, 101.0, 157.0) / 255.0;
+    vec3 fogColor = vec3(0.8);
 
     //color = aces_tonemap(color);
 
