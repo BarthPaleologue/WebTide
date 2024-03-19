@@ -17,6 +17,8 @@ import { Effect } from "@babylonjs/core/Materials/effect";
 
 import "@babylonjs/core/Rendering/depthRendererSceneComponent";
 
+import sandTexture from "../assets/sand.jpg";
+
 import postProcessCode from "../shaders/smallPostProcess.glsl";
 
 const canvas = document.getElementById("renderer") as HTMLCanvasElement;
@@ -55,8 +57,20 @@ skyboxMaterial.reflectionTexture.coordinatesMode = Texture.SKYBOX_MODE;
 skyboxMaterial.disableLighting = true;
 skybox.material = skyboxMaterial;
 
+const groundMaterial = new StandardMaterial("groundMaterial", scene);
+groundMaterial.diffuseTexture = new Texture(sandTexture, scene);
+groundMaterial.specularColor.scaleInPlace(0);
+
 const radius = 2;
 const tileSize = 10;
+
+const ground = MeshBuilder.CreateGround("ground", {
+    width: tileSize * radius * 4,
+    height: tileSize * radius * 4
+}, scene);
+ground.material = groundMaterial;
+ground.position.y = -2;
+
 for (let x = -radius; x <= radius; x++) {
     for (let z = -radius; z <= radius; z++) {
         const water = MeshBuilder.CreateGround("water", {
