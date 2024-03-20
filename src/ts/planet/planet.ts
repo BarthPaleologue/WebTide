@@ -1,7 +1,7 @@
 import { Scene } from "@babylonjs/core/scene";
 import { TransformNode } from "@babylonjs/core/Meshes/transformNode";
 import { Direction, PlanetChunk } from "./planetChunk";
-import { Material } from "@babylonjs/core";
+import { Material } from "@babylonjs/core/Materials/material";
 
 export class Planet {
     readonly transform: TransformNode;
