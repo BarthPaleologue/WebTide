@@ -25,7 +25,7 @@ fn phillipsSpectrum2D(k: vec2<f32>) -> f32 {
     var kw2: f32 = dot(normalize(k), normalize(windDir));
     kw2 *= kw2;
 
-    let l: f32 = 1.0;
+    let l: f32 = 0.0;
     let cutoff: f32 = exp(-dot(k, k) * l * l);
 
     return A * exp(-1.0 / kL2) * kw2 * cutoff / k4;

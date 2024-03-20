@@ -11,21 +11,25 @@ uniform sampler2D heightMap;
 uniform sampler2D gradientMap;
 uniform sampler2D displacementMap;
 
+uniform float tileScale;
+
 varying vec3 vNormalW;
 varying vec3 vPositionW;
 varying vec4 vPositionClip;
 
-const float scalingFactor = 1e-5;
+float scalingFactor;
 
 vec3 sampleHeightAndGradient(vec2 point) {
     float height = texture(heightMap, point).r;
     vec2 gradient = texture(gradientMap, point).rg * 0.1; // the 0.1 here is just for artistic reasons
     vec3 heightAndGradient = vec3(height, gradient);
 
-    return heightAndGradient * scalingFactor * 0.5;
+    return heightAndGradient * scalingFactor * 4.0;
 }
 
 void main() {
+    scalingFactor = 1 / (tileScale * tileScale);
+
     vec3 waterPosition = position;
 
     vec2 displacement = texture(displacementMap, uv).rg * scalingFactor;

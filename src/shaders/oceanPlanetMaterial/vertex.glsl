@@ -15,11 +15,13 @@ uniform sampler2D heightMap;
 uniform sampler2D gradientMap;
 uniform sampler2D displacementMap;
 
+uniform float tileScale;
+
 varying vec3 vNormalW;
 varying vec3 vPositionW;
 varying vec4 vPositionClip;
 
-const float scalingFactor = 1e-5;
+float scalingFactor;
 
 const float triPlanarScale = 1.0;
 
@@ -40,10 +42,12 @@ vec3 sampleHeightAndGradient(vec3 point) {
     vec2 gradient = triplanarSample(point, gradientMap, triPlanarScale, 0.5).rg * 0.1; // the 0.5 here is just for artistic reasons
     vec3 heightAndGradient = vec3(height, gradient);
 
-    return heightAndGradient * scalingFactor * 0.2;
+    return heightAndGradient * scalingFactor * 2.0;
 }
 
 void main() {
+    scalingFactor = 1.0 / (tileScale * tileScale);
+
     vec3 positionWorldSpace = vec3(world * vec4(position, 1.0));
     vec3 positionPlanetSpace = vec3(planetInverseWorld * vec4(positionWorldSpace, 1.0));
 

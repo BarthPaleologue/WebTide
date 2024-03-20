@@ -91,7 +91,7 @@ export class OceanPlanetMaterial extends ShaderMaterial {
         }
         super(name, scene, "oceanPlanet", {
             attributes: ["position", "normal"],
-            uniforms: ["world", "worldView", "worldViewProjection", "view", "projection", "cameraPositionW", "lightDirection", "planetWorld", "planetInverseWorld"],
+            uniforms: ["world", "worldView", "worldViewProjection", "view", "projection", "cameraPositionW", "lightDirection", "planetWorld", "planetInverseWorld", "tileScale"],
             samplers: ["heightMap", "gradientMap", "displacementMap", "reflectionSampler", "depthSampler", "textureSampler"]
         });
         this.depthRenderer = scene.enableDepthRenderer(scene.activeCamera, false, true);
@@ -155,6 +155,8 @@ export class OceanPlanetMaterial extends ShaderMaterial {
         this.setVector3("cameraPositionW", activeCamera.globalPosition);
 
         this.setVector3("lightDirection", lightDirection);
+
+        this.setFloat("tileScale", this.tileScale);
 
         this.setMatrix("planetWorld", planetTransform.getWorldMatrix());
         this.setMatrix("planetInverseWorld", planetTransform.getWorldMatrix().clone().invert());

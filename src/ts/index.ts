@@ -48,7 +48,7 @@ camera.attachControl();
 const light = new DirectionalLight("light", new Vector3(1, -1, 3).normalize(), scene);
 
 const textureSize = 256;
-const tileScale = 1000;
+const tileScale = 100;
 
 const depthRenderer = scene.enableDepthRenderer(camera, false, true);
 const initialSpectrum = new PhillipsSpectrum(textureSize, tileScale, engine);
