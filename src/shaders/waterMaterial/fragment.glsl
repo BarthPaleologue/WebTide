@@ -27,7 +27,7 @@ void main() {
     float ndl = max(0.0, dot(normal, -lightDirection));
     vec3 diffuseColor = vec3(0.011126082368383245, 0.05637409755197975, 0.09868919754109445);
 
-    diffuseColor = mix(diffuseColor, backgroundColor, exp(-distanceThroughWater * 10.0));
+    diffuseColor = mix(diffuseColor, backgroundColor, exp(-distanceThroughWater * 0.1));
 
     vec3 viewRayW = normalize(vPositionW - cameraPositionW);
     vec3 viewRayRefractedW = refract(viewRayW, normal, 0.75);
