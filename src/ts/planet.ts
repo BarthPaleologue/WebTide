@@ -11,6 +11,8 @@ import { WaterMaterial } from "./waterMaterial";
 import { PhillipsSpectrum } from "./spectrum/phillipsSpectrum";
 import { Planet } from "./planet/planet";
 import { OceanPlanetMaterial } from "./planet/oceanPlanetMaterial";
+import { StandardMaterial } from "@babylonjs/core/Materials/standardMaterial";
+import { Texture } from "@babylonjs/core/Materials/Textures/texture";
 
 const canvas = document.getElementById("renderer") as HTMLCanvasElement;
 canvas.width = window.innerWidth;
@@ -24,7 +26,7 @@ const scene = new Scene(engine);
 const camera = new ArcRotateCamera("camera", 3.14 / 3, 3.14 / 3, 15, Vector3.Zero(), scene);
 camera.attachControl();
 
-const light = new DirectionalLight("light", new Vector3(1, -1, 0).normalize(), scene);
+const light = new DirectionalLight("light", new Vector3(1, -1, 3).normalize(), scene);
 
 const textureSize = 512;
 const tileScale = 1000;
@@ -50,6 +52,14 @@ const planet = new Planet(planetRadius, oceanPlanetMaterial, scene);
 planet.transform.position.y = planetRadius + 1;
 
 camera.setTarget(planet.transform.getAbsolutePosition());
+
+const skybox = MeshBuilder.CreateBox("skyBox", { size: camera.maxZ / 2 }, scene);
+const skyboxMaterial = new StandardMaterial("skyBox", scene);
+skyboxMaterial.backFaceCulling = false;
+skyboxMaterial.reflectionTexture = waterMaterial.reflectionTexture;
+skyboxMaterial.reflectionTexture.coordinatesMode = Texture.SKYBOX_MODE;
+skyboxMaterial.disableLighting = true;
+skybox.material = skyboxMaterial;
 
 
 function updateScene() {
