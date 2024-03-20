@@ -20,21 +20,21 @@ import "@babylonjs/core/Rendering/depthRendererSceneComponent";
 import sandTexture from "../assets/sand.jpg";
 
 import postProcessCode from "../shaders/smallPostProcess.glsl";
-import { OceanPlanetMaterial } from "./planet/oceanPlanetMaterial";
-import { Planet } from "./planet/planet";
+//import { OceanPlanetMaterial } from "./planet/oceanPlanetMaterial";
+//import { Planet } from "./planet/planet";
 
 const canvas = document.getElementById("renderer") as HTMLCanvasElement;
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
+if (!(await WebGPUEngine.IsSupportedAsync)) {
+    alert(
+        "WebGPU is not supported in your browser. Please check the compatibility here: https://github.com/gpuweb/gpuweb/wiki/Implementation-Status#implementation-status");
+}
+
 const engine = new WebGPUEngine(canvas, { antialias: true });
 engine.loadingScreen.displayLoadingUI();
 await engine.initAsync();
-
-if (!(await WebGPUEngine.IsSupportedAsync)) {
-    engine.loadingScreen.loadingUIText =
-        "WebGPU is not supported in your browser. Please check the compatibility here: https://github.com/gpuweb/gpuweb/wiki/Implementation-Status#implementation-status";
-}
 
 const scene = new Scene(engine);
 
