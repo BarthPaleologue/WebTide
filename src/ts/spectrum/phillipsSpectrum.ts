@@ -1,12 +1,12 @@
 import { createGaussianNoiseTexture, createStorageTexture } from "../utils/utils";
 import { ComputeShader } from "@babylonjs/core/Compute/computeShader";
 import { UniformBuffer } from "@babylonjs/core/Materials/uniformBuffer";
-import { WebGPUEngine } from "@babylonjs/core/Engines/webgpuEngine";
 import { Constants } from "@babylonjs/core/Engines/constants";
 import { InitialSpectrum } from "./initialSpectrum";
 
 import spectrumWGSL from "../../shaders/phillipsSpectrum.wgsl";
 import { BaseTexture } from "@babylonjs/core/Materials/Textures/baseTexture";
+import { Engine } from "@babylonjs/core/Engines/engine";
 
 /**
  * The Phillips spectrum is a common choice for the initial spectrum in ocean simulation.
@@ -29,7 +29,7 @@ export class PhillipsSpectrum implements InitialSpectrum {
 
     readonly tileScale;
 
-    constructor(textureSize: number, tileScale: number, engine: WebGPUEngine) {
+    constructor(textureSize: number, tileScale: number, engine: Engine) {
         this.textureSize = textureSize;
         this.tileScale = tileScale;
 

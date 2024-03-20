@@ -1,33 +1,34 @@
-import fragment from "../shaders/waterMaterial/fragment.glsl";
-import vertex from "../shaders/waterMaterial/vertex.glsl";
+import fragment from "../../shaders/oceanPlanetMaterial/fragment.glsl";
+import vertex from "../../shaders/oceanPlanetMaterial/vertex.glsl";
 
 import { Scene } from "@babylonjs/core/scene";
-import { IFFT } from "./utils/IFFT";
-import { createStorageTexture } from "./utils/utils";
-import { DynamicSpectrum } from "./spectrum/dynamicSpectrum";
+import { IFFT } from "../utils/IFFT";
+import { createStorageTexture } from "../utils/utils";
+import { DynamicSpectrum } from "../spectrum/dynamicSpectrum";
 import { Vector3 } from "@babylonjs/core/Maths/math.vector";
 import { ShaderMaterial } from "@babylonjs/core/Materials/shaderMaterial";
 import { BaseTexture } from "@babylonjs/core/Materials/Textures/baseTexture";
 import { Effect } from "@babylonjs/core/Materials/effect";
 import { Constants } from "@babylonjs/core/Engines/constants";
-import { InitialSpectrum } from "./spectrum/initialSpectrum";
+import { InitialSpectrum } from "../spectrum/initialSpectrum";
 import { CubeTexture } from "@babylonjs/core/Materials/Textures/cubeTexture";
 import "@babylonjs/core/Rendering/depthRendererSceneComponent";
 import { DepthRenderer } from "@babylonjs/core/Rendering/depthRenderer";
 import { RenderTargetTexture } from "@babylonjs/core/Materials/Textures/renderTargetTexture";
 
-import TropicalSunnyDay_px from "../assets/skybox/TropicalSunnyDay_px.jpg";
-import TropicalSunnyDay_py from "../assets/skybox/TropicalSunnyDay_py.jpg";
-import TropicalSunnyDay_pz from "../assets/skybox/TropicalSunnyDay_pz.jpg";
-import TropicalSunnyDay_nx from "../assets/skybox/TropicalSunnyDay_nx.jpg";
-import TropicalSunnyDay_ny from "../assets/skybox/TropicalSunnyDay_ny.jpg";
-import TropicalSunnyDay_nz from "../assets/skybox/TropicalSunnyDay_nz.jpg";
+import TropicalSunnyDay_px from "../../assets/skybox/TropicalSunnyDay_px.jpg";
+import TropicalSunnyDay_py from "../../assets/skybox/TropicalSunnyDay_py.jpg";
+import TropicalSunnyDay_pz from "../../assets/skybox/TropicalSunnyDay_pz.jpg";
+import TropicalSunnyDay_nx from "../../assets/skybox/TropicalSunnyDay_nx.jpg";
+import TropicalSunnyDay_ny from "../../assets/skybox/TropicalSunnyDay_ny.jpg";
+import TropicalSunnyDay_nz from "../../assets/skybox/TropicalSunnyDay_nz.jpg";
+import { TransformNode } from "@babylonjs/core/Meshes/transformNode";
 
 /**
- * The material that makes all the magic happen. Its vertex shader deforms the water mesh according to the height map
- * computed using IFFT. The fragment shader makes is look like water.
+ * This material wraps the ocean around a sphere using triplanar mapping.
+ * It works in the same way as the WaterMaterial but with a different shader.
  */
-export class WaterMaterial extends ShaderMaterial {
+export class OceanPlanetMaterial extends ShaderMaterial {
     /**
      * The size of the textures used in the simulation. Higher values are more accurate but slower to compute.
      */
@@ -86,15 +87,15 @@ export class WaterMaterial extends ShaderMaterial {
     private elapsedSeconds = 3600;
 
     constructor(name: string, initialSpectrum: InitialSpectrum, scene: Scene) {
-        if (Effect.ShadersStore["oceanVertexShader"] === undefined) {
-            Effect.ShadersStore["oceanVertexShader"] = vertex;
+        if (Effect.ShadersStore["oceanPlanetVertexShader"] === undefined) {
+            Effect.ShadersStore["oceanPlanetVertexShader"] = vertex;
         }
-        if (Effect.ShadersStore["oceanFragmentShader"] === undefined) {
-            Effect.ShadersStore["oceanFragmentShader"] = fragment;
+        if (Effect.ShadersStore["oceanPlanetFragmentShader"] === undefined) {
+            Effect.ShadersStore["oceanPlanetFragmentShader"] = fragment;
         }
-        super(name, scene, "ocean", {
-            attributes: ["position", "normal", "uv"],
-            uniforms: ["world", "worldView", "worldViewProjection", "view", "projection", "cameraPositionW", "lightDirection"],
+        super(name, scene, "oceanPlanet", {
+            attributes: ["position", "normal"],
+            uniforms: ["world", "worldView", "worldViewProjection", "view", "projection", "cameraPositionW", "lightDirection", "planetInverseWorld"],
             samplers: ["heightMap", "gradientMap", "displacementMap", "reflectionSampler", "depthSampler", "textureSampler"]
         });
         this.depthRenderer = scene.enableDepthRenderer();
@@ -137,9 +138,10 @@ export class WaterMaterial extends ShaderMaterial {
      * Update the material with the new state of the ocean simulation.
      * IFFT will be used to compute the height map, gradient map and displacement map for the current time.
      * @param deltaSeconds The time elapsed since the last update in seconds
+     * @param planetTransform
      * @param lightDirection The direction of the light in the scene
      */
-    public update(deltaSeconds: number, lightDirection: Vector3) {
+    public update(deltaSeconds: number, planetTransform: TransformNode, lightDirection: Vector3) {
         this.elapsedSeconds += deltaSeconds;
         this.dynamicSpectrum.generate(this.elapsedSeconds);
 
@@ -157,6 +159,8 @@ export class WaterMaterial extends ShaderMaterial {
         this.setVector3("cameraPositionW", activeCamera.globalPosition);
 
         this.setVector3("lightDirection", lightDirection);
+
+        this.setMatrix("planetInverseWorld", planetTransform.getWorldMatrix().clone().invert());
     }
 
     public dispose(forceDisposeEffect?: boolean, forceDisposeTextures?: boolean, notBoundToMesh?: boolean) {

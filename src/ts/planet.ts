@@ -49,6 +49,7 @@ water.position.y = -1;
 function updateScene() {
     const deltaSeconds = engine.getDeltaTime() / 1000;
     waterMaterial.update(deltaSeconds, light.direction);
+    planet.material.update(deltaSeconds, planet.transform, light.direction);
 }
 
 scene.executeWhenReady(() => {
