@@ -20,6 +20,8 @@ import "@babylonjs/core/Rendering/depthRendererSceneComponent";
 import sandTexture from "../assets/sand.jpg";
 
 import postProcessCode from "../shaders/smallPostProcess.glsl";
+import { OceanPlanetMaterial } from "./planet/oceanPlanetMaterial";
+import { Planet } from "./planet/planet";
 
 const canvas = document.getElementById("renderer") as HTMLCanvasElement;
 canvas.width = window.innerWidth;
@@ -37,8 +39,10 @@ const scene = new Scene(engine);
 
 const camera = new ArcRotateCamera("camera", 3.14 / 3, 3.14 / 3, 5, new Vector3(0, 0.8, 0), scene);
 camera.wheelPrecision = 100;
+camera.angularSensibilityX = 3000;
+camera.angularSensibilityY = 3000;
 camera.lowerRadiusLimit = 2;
-camera.upperBetaLimit = 3.14 / 2;
+//camera.upperBetaLimit = 3.14 / 2;
 camera.attachControl();
 
 const light = new DirectionalLight("light", new Vector3(1, -1, 3).normalize(), scene);
@@ -46,9 +50,17 @@ const light = new DirectionalLight("light", new Vector3(1, -1, 3).normalize(), s
 const textureSize = 256;
 const tileScale = 1000;
 
-const depthRenderer = scene.enableDepthRenderer(camera);
+const depthRenderer = scene.enableDepthRenderer(camera, false, true);
 const initialSpectrum = new PhillipsSpectrum(textureSize, tileScale, engine);
 const waterMaterial = new WaterMaterial("waterMaterial", initialSpectrum, scene);
+
+
+const oceanPlanetMaterial = new OceanPlanetMaterial("oceanPlanet", initialSpectrum, scene);
+const planetRadius = 2;
+const planet = new Planet(planetRadius, oceanPlanetMaterial, scene);
+planet.transform.position.y = planetRadius + 1;
+planet.transform.position.x = -10;
+planet.transform.position.z = -5;
 
 const skybox = MeshBuilder.CreateBox("skyBox", { size: camera.maxZ / 2 }, scene);
 const skyboxMaterial = new StandardMaterial("skyBox", scene);
@@ -96,6 +108,7 @@ postProcess.onApplyObservable.add((effect) => {
 function updateScene() {
     const deltaSeconds = engine.getDeltaTime() / 1000;
     waterMaterial.update(deltaSeconds, light.direction);
+    oceanPlanetMaterial.update(deltaSeconds, planet.transform, light.direction);
 }
 
 scene.executeWhenReady(() => {
