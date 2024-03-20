@@ -11,7 +11,8 @@ const config = {
 
     entry: {
         index: "./src/ts/index.ts",
-        minimal: "./src/ts/minimal.ts"
+        minimal: "./src/ts/minimal.ts",
+        planet: "./src/ts/planet.ts",
     },
     output: {
         path: path.resolve(__dirname, "dist")
@@ -34,6 +35,12 @@ const config = {
             filename: "minimal.html",
             template: path.join(htmlPath, "index.html"),
             chunks: ["minimal"]
+        }),
+        new HtmlWebpackPlugin({
+            title: "WebGPU Planet",
+            filename: "planet.html",
+            template: path.join(htmlPath, "index.html"),
+            chunks: ["planet"]
         }),
         new MiniCssExtractPlugin()
     ],
