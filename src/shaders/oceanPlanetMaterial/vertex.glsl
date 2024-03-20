@@ -40,7 +40,7 @@ vec3 sampleHeightAndGradient(vec3 point) {
     vec2 gradient = triplanarSample(point, gradientMap, triPlanarScale, 0.5).rg * 0.1; // the 0.5 here is just for artistic reasons
     vec3 heightAndGradient = vec3(height, gradient);
 
-    return heightAndGradient * scalingFactor * 0.5;
+    return heightAndGradient * scalingFactor * 0.2;
 }
 
 void main() {

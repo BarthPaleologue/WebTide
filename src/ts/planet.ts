@@ -45,7 +45,7 @@ water.material = waterMaterial;
 water.position.y = -1;
 
 const oceanPlanetMaterial = new OceanPlanetMaterial("oceanPlanet", initialSpectrum, scene);
-const planetRadius = 5;
+const planetRadius = 2;
 const planet = new Planet(planetRadius, oceanPlanetMaterial, scene);
 planet.transform.position.y = planetRadius + 1;
 
