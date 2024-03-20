@@ -29,7 +29,7 @@ camera.attachControl();
 const light = new DirectionalLight("light", new Vector3(1, -1, 3).normalize(), scene);
 
 const textureSize = 512;
-const tileSize = 1000;
+const tileSize = 10;
 
 const initialSpectrum = new PhillipsSpectrum(textureSize, tileSize, engine);
 const waterMaterial = new WaterMaterial("waterMaterial", initialSpectrum, scene);
@@ -37,8 +37,8 @@ const waterMaterial = new WaterMaterial("waterMaterial", initialSpectrum, scene)
 const water = MeshBuilder.CreateGround(
     "water",
     {
-        width: 10,
-        height: 10,
+        width: tileSize,
+        height: tileSize,
         subdivisions: textureSize
     },
     scene
