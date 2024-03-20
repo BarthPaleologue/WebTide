@@ -97,7 +97,7 @@ export class WaterMaterial extends ShaderMaterial {
             uniforms: ["world", "worldView", "worldViewProjection", "view", "projection", "cameraPositionW", "lightDirection"],
             samplers: ["heightMap", "gradientMap", "displacementMap", "reflectionSampler", "depthSampler", "textureSampler"]
         });
-        this.depthRenderer = scene.enableDepthRenderer();
+        this.depthRenderer = scene.enableDepthRenderer(scene.activeCamera, false, true);
         this.setTexture("depthSampler", this.depthRenderer.getDepthMap());
 
         // create render target texture
