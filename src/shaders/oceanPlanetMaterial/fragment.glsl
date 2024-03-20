@@ -12,7 +12,7 @@ uniform sampler2D textureSampler;
 uniform samplerCube reflectionSampler;
 
 void main() {
-    vec3 normal = -normalize(cross(dFdx(vPositionW), dFdy(vPositionW)));
+    vec3 normal = vNormalW;
 
     vec2 screenUV = vPositionClip.xy / vPositionClip.w;
     screenUV = screenUV * 0.5 + 0.5;
@@ -36,7 +36,7 @@ void main() {
     // water fresnel (https://fileadmin.cs.lth.se/cs/Education/EDAF80/seminars/2022/sem_4.pdf)
     float fresnel = 0.02 + 0.98 * pow(1.0 - dot(-viewRayW, normal), 5.0);
 
-    vec3 reflectedColor = textureCube(reflectionSampler, viewRayReflectedW).rgb;
+    vec3 reflectedColor = textureCube(reflectionSampler, viewRayReflectedW).rgb; //vec3(0.14, 0.23, 0.40);
 
     float specular = pow(max(0.0, dot(reflect(-lightDirection, normal), viewRayW)), 720.0) * 210.0;
 

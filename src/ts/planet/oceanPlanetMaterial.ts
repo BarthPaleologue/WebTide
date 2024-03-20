@@ -16,12 +16,8 @@ import "@babylonjs/core/Rendering/depthRendererSceneComponent";
 import { DepthRenderer } from "@babylonjs/core/Rendering/depthRenderer";
 import { RenderTargetTexture } from "@babylonjs/core/Materials/Textures/renderTargetTexture";
 
-import TropicalSunnyDay_px from "../../assets/skybox/TropicalSunnyDay_px.jpg";
-import TropicalSunnyDay_py from "../../assets/skybox/TropicalSunnyDay_py.jpg";
-import TropicalSunnyDay_pz from "../../assets/skybox/TropicalSunnyDay_pz.jpg";
-import TropicalSunnyDay_nx from "../../assets/skybox/TropicalSunnyDay_nx.jpg";
 import TropicalSunnyDay_ny from "../../assets/skybox/TropicalSunnyDay_ny.jpg";
-import TropicalSunnyDay_nz from "../../assets/skybox/TropicalSunnyDay_nz.jpg";
+
 import { TransformNode } from "@babylonjs/core/Meshes/transformNode";
 
 /**
@@ -95,7 +91,7 @@ export class OceanPlanetMaterial extends ShaderMaterial {
         }
         super(name, scene, "oceanPlanet", {
             attributes: ["position", "normal"],
-            uniforms: ["world", "worldView", "worldViewProjection", "view", "projection", "cameraPositionW", "lightDirection", "planetInverseWorld"],
+            uniforms: ["world", "worldView", "worldViewProjection", "view", "projection", "cameraPositionW", "lightDirection", "planetWorld", "planetInverseWorld"],
             samplers: ["heightMap", "gradientMap", "displacementMap", "reflectionSampler", "depthSampler", "textureSampler"]
         });
         this.depthRenderer = scene.enableDepthRenderer();
@@ -108,8 +104,8 @@ export class OceanPlanetMaterial extends ShaderMaterial {
         this.setTexture("textureSampler", this.screenRenderTarget);
 
         this.reflectionTexture = new CubeTexture("", scene, null, false, [
-            TropicalSunnyDay_px, TropicalSunnyDay_py, TropicalSunnyDay_pz,
-            TropicalSunnyDay_nx, TropicalSunnyDay_ny, TropicalSunnyDay_nz
+            TropicalSunnyDay_ny, TropicalSunnyDay_ny, TropicalSunnyDay_ny,
+            TropicalSunnyDay_ny, TropicalSunnyDay_ny, TropicalSunnyDay_ny
         ]);
         //this.reflectionTexture.coordinatesMode = Constants.TEXTURE_CUBE_MAP;
         this.setTexture("reflectionSampler", this.reflectionTexture);
@@ -160,6 +156,7 @@ export class OceanPlanetMaterial extends ShaderMaterial {
 
         this.setVector3("lightDirection", lightDirection);
 
+        this.setMatrix("planetWorld", planetTransform.getWorldMatrix());
         this.setMatrix("planetInverseWorld", planetTransform.getWorldMatrix().clone().invert());
     }
 

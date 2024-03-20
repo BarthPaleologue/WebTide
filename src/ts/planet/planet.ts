@@ -1,15 +1,14 @@
 import { Scene } from "@babylonjs/core/scene";
 import { TransformNode } from "@babylonjs/core/Meshes/transformNode";
 import { Direction, PlanetChunk } from "./planetChunk";
-import { OceanPlanetMaterial } from "./oceanPlanetMaterial";
-import { PhillipsSpectrum } from "../spectrum/phillipsSpectrum";
+import { Material } from "@babylonjs/core";
 
 export class Planet {
     readonly transform: TransformNode;
     readonly chunks: PlanetChunk[];
-    readonly material: OceanPlanetMaterial;
+    readonly material: Material;
 
-    constructor(radius: number, scene: Scene) {
+    constructor(radius: number, material: Material, scene: Scene) {
         this.transform = new TransformNode("planet", scene);
 
         this.chunks = [
@@ -21,8 +20,7 @@ export class Planet {
             new PlanetChunk(Direction.BACK, radius, scene)
         ];
 
-        const initialSpectrum = new PhillipsSpectrum(256, 1000, scene.getEngine());
-        this.material = new OceanPlanetMaterial("oceanPlanet", initialSpectrum, scene);
+        this.material = material;
 
         this.chunks.forEach(async (chunk) => {
             chunk.mesh.parent = this.transform;

@@ -10,6 +10,7 @@ import { DirectionalLight } from "@babylonjs/core/Lights/directionalLight";
 import { WaterMaterial } from "./waterMaterial";
 import { PhillipsSpectrum } from "./spectrum/phillipsSpectrum";
 import { Planet } from "./planet/planet";
+import { OceanPlanetMaterial } from "./planet/oceanPlanetMaterial";
 
 const canvas = document.getElementById("renderer") as HTMLCanvasElement;
 canvas.width = window.innerWidth;
@@ -31,12 +32,6 @@ const tileScale = 1000;
 const initialSpectrum = new PhillipsSpectrum(textureSize, tileScale, engine);
 const waterMaterial = new WaterMaterial("waterMaterial", initialSpectrum, scene);
 
-const planet = new Planet(3, scene);
-planet.transform.position.y = 4;
-//planet.material.wireframe = true;
-
-camera.setTarget(planet.transform.position);
-
 const water = MeshBuilder.CreateGround(
     "water",
     {
@@ -49,10 +44,18 @@ const water = MeshBuilder.CreateGround(
 water.material = waterMaterial;
 water.position.y = -1;
 
+const oceanPlanetMaterial = new OceanPlanetMaterial("oceanPlanet", initialSpectrum, scene);
+const planetRadius = 5;
+const planet = new Planet(planetRadius, oceanPlanetMaterial, scene);
+planet.transform.position.y = planetRadius + 1;
+
+camera.setTarget(planet.transform.getAbsolutePosition());
+
+
 function updateScene() {
     const deltaSeconds = engine.getDeltaTime() / 1000;
     waterMaterial.update(deltaSeconds, light.direction);
-    planet.material.update(deltaSeconds, planet.transform, light.direction);
+    oceanPlanetMaterial.update(deltaSeconds, planet.transform, light.direction);
 }
 
 scene.executeWhenReady(() => {

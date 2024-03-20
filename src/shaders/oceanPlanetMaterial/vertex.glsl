@@ -8,6 +8,7 @@ uniform mat4 worldViewProjection;
 uniform mat4 view;
 uniform mat4 projection;
 
+uniform mat4 planetWorld;
 uniform mat4 planetInverseWorld;
 
 uniform sampler2D heightMap;
@@ -18,7 +19,9 @@ varying vec3 vNormalW;
 varying vec3 vPositionW;
 varying vec4 vPositionClip;
 
-const float scalingFactor = 2e-6;
+const float scalingFactor = 1e-5;
+
+const float triPlanarScale = 1.0;
 
 #define inline
 vec3 triplanarSample(vec3 position, sampler2D textureToSample, float scale, float blend) {
@@ -33,8 +36,8 @@ vec3 triplanarSample(vec3 position, sampler2D textureToSample, float scale, floa
 }
 
 vec3 sampleHeightAndGradient(vec3 point) {
-    float height = triplanarSample(point, heightMap, 1.0, 0.5).r;
-    vec2 gradient = triplanarSample(point, gradientMap, 1.0, 0.5).rg * 0.1; // the 0.1 here is just for artistic reasons
+    float height = triplanarSample(point, heightMap, triPlanarScale, 0.5).r;
+    vec2 gradient = triplanarSample(point, gradientMap, triPlanarScale, 0.5).rg * 0.1; // the 0.5 here is just for artistic reasons
     vec3 heightAndGradient = vec3(height, gradient);
 
     return heightAndGradient * scalingFactor * 0.5;
@@ -44,27 +47,32 @@ void main() {
     vec3 positionWorldSpace = vec3(world * vec4(position, 1.0));
     vec3 positionPlanetSpace = vec3(planetInverseWorld * vec4(positionWorldSpace, 1.0));
 
+    float planetRadius = length(positionPlanetSpace);
+
     vec3 planetNormal = normalize(positionPlanetSpace);
 
-    vec3 waterPosition = positionWorldSpace;
-    vec3 planetNormalW = normalize(positionWorldSpace);
+    vec3 waterPosition = positionPlanetSpace;
 
-    vec2 displacement = triplanarSample(positionPlanetSpace, displacementMap, 1.0, 0.5).rg * scalingFactor;
+    // find theta and phi from spherical coords
+    float theta = acos(planetNormal.y);
+    float phi = atan(planetNormal.z, planetNormal.x);
+
+    vec3 tangent1 = vec3(-sin(phi), 0.0, cos(phi));
+    vec3 tangent2 = vec3(cos(theta) * cos(phi), -sin(theta), cos(theta) * sin(phi));
+
+    vec2 displacement = triplanarSample(positionPlanetSpace, displacementMap, triPlanarScale, 0.5).rg * scalingFactor * 0.5;
+    waterPosition += tangent1 * displacement.x + tangent2 * displacement.y;
     //waterPosition.x += displacement.x;
     //waterPosition.z += displacement.y;
 
     vec3 heightAndGradient = sampleHeightAndGradient(positionPlanetSpace);
-    waterPosition += planetNormalW * heightAndGradient.x;
+    waterPosition += planetNormal * heightAndGradient.x;
 
-    // normal using central difference
-    /*float epsilon = 0.001;
-    vec3 tangent1 = normalize(vec3(uv.x + epsilon, sampleHeightAndGradient(uv + vec2(epsilon, 0.0)).x, uv.y) - vec3(uv.x - epsilon, sampleHeightAndGradient(uv - vec2(epsilon, 0.0)).x, uv.y));
-    vec3 tangent2 = normalize(vec3(uv.x, sampleHeightAndGradient(uv + vec2(0.0, epsilon)).x, uv.y + epsilon) - vec3(uv.x, sampleHeightAndGradient(uv - vec2(0.0, epsilon)).x, uv.y - epsilon));
-    vec3 normal = -normalize(cross(tangent1, tangent2));*/
+    vec3 normal = normalize(planetNormal - heightAndGradient.y * tangent1 - heightAndGradient.z * tangent2);
 
-    vPositionW = waterPosition;
-    //vNormalW = normal;
-    vPositionClip = projection * view * vec4(waterPosition, 1.0);
+    vPositionW = vec3(planetWorld * vec4(waterPosition, 1.0));
+    vNormalW = vec3(planetWorld * vec4(normal, 0.0));
+    vPositionClip = projection * view * planetWorld * vec4(waterPosition, 1.0);
 
     gl_Position = vPositionClip;
 }
