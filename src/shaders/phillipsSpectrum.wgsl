@@ -5,7 +5,10 @@ const PI: f32 = 3.1415926;
 
 struct Params {
     textureSize: u32,
-    tileSize: f32
+    tileSize: f32,
+    windTheta: f32,
+    windSpeed: f32,
+    smallWaveLengthCutoff: f32,
 };
 
 @group(0) @binding(2) var<uniform> params: Params;
@@ -16,17 +19,17 @@ fn phillipsSpectrum2D(k: vec2<f32>) -> f32 {
     }
 
     let A: f32 = 1.0;
-    let windSpeed: f32 = 31.0;
-    let windDir = normalize(vec2<f32>(1.0, 0.0));
+    let windDir = vec2<f32>(cos(params.windTheta), sin(params.windTheta));
     let g: f32 = 9.81;
-    let L: f32 = windSpeed * windSpeed / g;
-    let kL2: f32 = dot(k, k) * L * L;
-    let k4: f32 = dot(k, k) * dot(k, k);
+    let L: f32 = params.windSpeed * params.windSpeed / g;
+    let k2: f32 = dot(k, k);
+    let kL2: f32 = k2 * L * L;
+    let k4: f32 = k2 * k2;
     var kw2: f32 = dot(normalize(k), normalize(windDir));
     kw2 *= kw2;
 
-    let l: f32 = 0.0;
-    let cutoff: f32 = exp(-dot(k, k) * l * l);
+    let l: f32 = params.smallWaveLengthCutoff;
+    let cutoff: f32 = exp(-k2 * l * l);
 
     return A * exp(-1.0 / kL2) * kw2 * cutoff / k4;
 }

@@ -23,11 +23,17 @@ export class PhillipsSpectrum implements InitialSpectrum {
 
     readonly h0: BaseTexture;
 
-    private readonly settings: UniformBuffer;
+    private readonly uniformBuffer: UniformBuffer;
 
     readonly textureSize;
 
     readonly tileSize;
+
+    readonly settings = {
+        windTheta: 0.0,
+        windSpeed: 31.0,
+        smallWaveLengthCutOff: 0.01
+    }
 
     constructor(textureSize: number, tileSize: number, engine: Engine) {
         this.textureSize = textureSize;
@@ -50,20 +56,33 @@ export class PhillipsSpectrum implements InitialSpectrum {
         this.gaussianNoise = createGaussianNoiseTexture(textureSize, engine);
         this.h0 = createStorageTexture("h0", engine, textureSize, textureSize, Constants.TEXTUREFORMAT_RGBA);
 
-        this.settings = new UniformBuffer(engine);
+        this.uniformBuffer = new UniformBuffer(engine);
 
-        this.settings.addUniform("textureSize", 1);
-        this.settings.addUniform("tileSize", 1);
+        this.uniformBuffer.addUniform("textureSize", 1);
+        this.uniformBuffer.addUniform("tileSize", 1);
+        this.uniformBuffer.addUniform("windTheta", 1);
+        this.uniformBuffer.addUniform("windSpeed", 1);
+        this.uniformBuffer.addUniform("smallWaveLengthCutOff", 1);
 
         this.computeShader.setStorageTexture("H0", this.h0);
         this.computeShader.setTexture("Noise", this.gaussianNoise, false);
-        this.computeShader.setUniformBuffer("params", this.settings);
+        this.computeShader.setUniformBuffer("params", this.uniformBuffer);
 
-        this.settings.updateInt("textureSize", this.textureSize);
-        this.settings.updateFloat("tileSize", this.tileSize);
+        this.uniformBuffer.updateInt("textureSize", this.textureSize);
+        this.uniformBuffer.updateFloat("tileSize", this.tileSize);
+        this.uniformBuffer.updateFloat("windTheta", this.settings.windTheta);
+        this.uniformBuffer.updateFloat("windSpeed", this.settings.windSpeed);
+        this.uniformBuffer.updateFloat("smallWaveLengthCutOff", this.settings.smallWaveLengthCutOff);
 
-        this.settings.update();
+        this.uniformBuffer.update();
 
         this.computeShader.dispatch(Math.ceil(this.textureSize / 8), Math.ceil(this.textureSize / 8), 1);
+    }
+
+    /**
+     * Every time a setting is changed on the CPU, the GPU settings must be updated. Call this method to do so.
+     */
+    public updateSettingsGPU() {
+        this.uniformBuffer.update();
     }
 }
