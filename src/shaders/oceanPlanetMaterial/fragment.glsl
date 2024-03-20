@@ -12,7 +12,7 @@ uniform sampler2D textureSampler;
 uniform samplerCube reflectionSampler;
 
 void main() {
-    vec3 normal = vNormalW;
+    vec3 normal = -normalize(cross(dFdx(vPositionW), dFdy(vPositionW)));
 
     vec2 screenUV = vPositionClip.xy / vPositionClip.w;
     screenUV = screenUV * 0.5 + 0.5;

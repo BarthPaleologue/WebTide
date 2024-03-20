@@ -20,7 +20,7 @@ await engine.initAsync();
 
 const scene = new Scene(engine);
 
-const camera = new ArcRotateCamera("camera", 3.14 / 3, 3.14 / 3, 5, Vector3.Zero(), scene);
+const camera = new ArcRotateCamera("camera", 3.14 / 3, 3.14 / 3, 15, Vector3.Zero(), scene);
 camera.attachControl();
 
 const light = new DirectionalLight("light", new Vector3(1, -1, 0).normalize(), scene);
@@ -31,8 +31,11 @@ const tileScale = 1000;
 const initialSpectrum = new PhillipsSpectrum(textureSize, tileScale, engine);
 const waterMaterial = new WaterMaterial("waterMaterial", initialSpectrum, scene);
 
-const planet = new Planet(1, scene);
+const planet = new Planet(3, scene);
+planet.transform.position.y = 4;
 //planet.material.wireframe = true;
+
+camera.setTarget(planet.transform.position);
 
 const water = MeshBuilder.CreateGround(
     "water",

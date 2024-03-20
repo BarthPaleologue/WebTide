@@ -32,7 +32,7 @@ function rotationFromDirection(direction: Direction) {
 export class PlanetChunk {
     readonly mesh: Mesh;
 
-    private readonly nbVerticesPerRow = 64;
+    private readonly nbVerticesPerRow = 256;
     private readonly size: number;
     private readonly direction: Direction;
 
