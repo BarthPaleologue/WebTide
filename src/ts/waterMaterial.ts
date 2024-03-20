@@ -34,9 +34,9 @@ export class WaterMaterial extends ShaderMaterial {
     readonly textureSize: number;
 
     /**
-     * The scale of the ocean tiles. A higher value will make the waves smaller and more frequent.
+     * The size of the ocean tiles.
      */
-    readonly tileScale: number;
+    readonly tileSize: number;
 
     readonly reflectionTexture: CubeTexture;
 
@@ -94,7 +94,7 @@ export class WaterMaterial extends ShaderMaterial {
         }
         super(name, scene, "ocean", {
             attributes: ["position", "normal", "uv"],
-            uniforms: ["world", "worldView", "worldViewProjection", "view", "projection", "cameraPositionW", "lightDirection", "tileScale"],
+            uniforms: ["world", "worldView", "worldViewProjection", "view", "projection", "cameraPositionW", "lightDirection", "tileSize"],
             samplers: ["heightMap", "gradientMap", "displacementMap", "reflectionSampler", "depthSampler", "textureSampler"]
         });
         this.depthRenderer = scene.enableDepthRenderer(scene.activeCamera, false, true);
@@ -118,7 +118,7 @@ export class WaterMaterial extends ShaderMaterial {
         }
 
         this.textureSize = initialSpectrum.textureSize;
-        this.tileScale = initialSpectrum.tileScale;
+        this.tileSize = initialSpectrum.tileSize;
 
         this.initialSpectrum = initialSpectrum;
         this.dynamicSpectrum = new DynamicSpectrum(this.initialSpectrum, scene.getEngine());
@@ -156,7 +156,7 @@ export class WaterMaterial extends ShaderMaterial {
         if (activeCamera === null) throw new Error("No active camera found");
         this.setVector3("cameraPositionW", activeCamera.globalPosition);
 
-        this.setFloat("tileScale", this.tileScale);
+        this.setFloat("tileSize", this.tileSize);
 
         this.setVector3("lightDirection", lightDirection);
     }

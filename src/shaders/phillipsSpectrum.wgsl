@@ -5,7 +5,7 @@ const PI: f32 = 3.1415926;
 
 struct Params {
     textureSize: u32,
-    tileScale: f32
+    tileSize: f32
 };
 
 @group(0) @binding(2) var<uniform> params: Params;
@@ -34,7 +34,7 @@ fn phillipsSpectrum2D(k: vec2<f32>) -> f32 {
 @compute @workgroup_size(8,8,1)
 fn computeSpectrum(@builtin(global_invocation_id) id: vec3<u32>)
 {
-	let deltaK = 2.0 * PI / params.tileScale;
+	let deltaK = 2.0 * PI / params.tileSize;
 	let nx = f32(id.x) - f32(params.textureSize) / 2.0;
 	let nz = f32(id.y) - f32(params.textureSize) / 2.0;
 	let k = vec2<f32>(nx, nz) * deltaK;

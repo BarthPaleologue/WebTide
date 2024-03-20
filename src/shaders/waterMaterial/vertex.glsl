@@ -11,7 +11,7 @@ uniform sampler2D heightMap;
 uniform sampler2D gradientMap;
 uniform sampler2D displacementMap;
 
-uniform float tileScale;
+uniform float tileSize;
 
 varying vec3 vNormalW;
 varying vec3 vPositionW;
@@ -24,15 +24,15 @@ vec3 sampleHeightAndGradient(vec2 point) {
     vec2 gradient = texture(gradientMap, point).rg * 0.1; // the 0.1 here is just for artistic reasons
     vec3 heightAndGradient = vec3(height, gradient);
 
-    return heightAndGradient * scalingFactor * 4.0;
+    return heightAndGradient * scalingFactor * 5.0;
 }
 
 void main() {
-    scalingFactor = 1 / (tileScale * tileScale);
+    scalingFactor = 1 / (tileSize * tileSize);
 
     vec3 waterPosition = position;
 
-    vec2 displacement = texture(displacementMap, uv).rg * scalingFactor;
+    vec2 displacement = texture(displacementMap, uv).rg * scalingFactor * 10.0;
     waterPosition.x += displacement.x;
     waterPosition.z += displacement.y;
 

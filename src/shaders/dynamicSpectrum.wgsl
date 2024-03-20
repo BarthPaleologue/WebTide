@@ -7,7 +7,7 @@ const PI: f32 = 3.1415926;
 
 struct Params {
     textureSize: u32,
-    tileScale: f32,
+    tileSize: f32,
     elapsedSeconds: f32,
 };
 
@@ -25,7 +25,7 @@ fn complexMult(a: vec2<f32>, b: vec2<f32>) -> vec2<f32> {
 fn computeSpectrum(@builtin(global_invocation_id) id: vec3<u32>) {
     let iid = vec3<i32>(id);
 
-    let deltaK = 2.0 * PI / params.tileScale;
+    let deltaK = 2.0 * PI / params.tileSize;
     let n = f32(id.x) - f32(params.textureSize) / 2.0;
     let m = f32(id.y) - f32(params.textureSize) / 2.0;
     let k = vec2<f32>(n, m) * deltaK;
@@ -44,6 +44,6 @@ fn computeSpectrum(@builtin(global_invocation_id) id: vec3<u32>) {
 	let displacement = ikh / (length(k) + 0.001);
 
     textureStore(HT, iid.xy, vec4<f32>(h, vec2(0.0)));
-    textureStore(DHT, iid.xy, vec4<f32>(ikh * params.tileScale, vec2(0.0)));
+    textureStore(DHT, iid.xy, vec4<f32>(ikh * params.tileSize, vec2(0.0)));
     textureStore(Displacement, iid.xy, vec4<f32>(displacement, vec2(0.0)));
 }

@@ -25,16 +25,17 @@ Using the ocean in your own project is straightforward:
 
 ```ts
 const textureSize = 512;
-const tileScale = 1000;
+const tileSize = 1000;
+const scaling = 0.01;
 
-const initialSpectrum = new PhillipsSpectrum(textureSize, tileScale, engine);
+const initialSpectrum = new PhillipsSpectrum(textureSize, tileSize, engine);
 const waterMaterial = new WaterMaterial("waterMaterial", initialSpectrum, scene);
 
 const water = MeshBuilder.CreateGround(
     "water",
     {
-        width: 10,
-        height: 10,
+        width: tileSize * scaling,
+        height: tileSize * scaling,
         subdivisions: textureSize
     },
     scene

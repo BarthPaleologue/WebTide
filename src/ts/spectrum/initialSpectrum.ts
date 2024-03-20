@@ -16,7 +16,7 @@ export interface InitialSpectrum {
      * The scale of the ocean tiles. A higher value will make the waves smaller and more frequent.
      * It corresponds to the Lx and Ly values in Tessendorf's paper.
      */
-    readonly tileScale: number;
+    readonly tileSize: number;
 
     /**
      * The textures containing the initial spectrum data.

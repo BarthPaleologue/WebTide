@@ -48,10 +48,10 @@ camera.attachControl();
 const light = new DirectionalLight("light", new Vector3(1, -1, 3).normalize(), scene);
 
 const textureSize = 256;
-const tileScale = 100;
+const tileSize = 100;
 
 const depthRenderer = scene.enableDepthRenderer(camera, false, true);
-const initialSpectrum = new PhillipsSpectrum(textureSize, tileScale, engine);
+const initialSpectrum = new PhillipsSpectrum(textureSize, tileSize, engine);
 const waterMaterial = new WaterMaterial("waterMaterial", initialSpectrum, scene);
 
 
@@ -75,11 +75,11 @@ groundMaterial.diffuseTexture = new Texture(sandTexture, scene);
 groundMaterial.specularColor.scaleInPlace(0);
 
 const radius = 3;
-const tileSize = 10;
+const scaling = 0.1;
 
 const ground = MeshBuilder.CreateGround("ground", {
-    width: tileSize * radius * 4,
-    height: tileSize * radius * 4
+    width: tileSize * radius * 4 * scaling,
+    height: tileSize * radius * 4 * scaling
 }, scene);
 ground.material = groundMaterial;
 ground.position.y = -2;
@@ -87,13 +87,13 @@ ground.position.y = -2;
 for (let x = -radius; x <= radius; x++) {
     for (let z = -radius; z <= radius; z++) {
         const water = MeshBuilder.CreateGround("water", {
-            width: tileSize,
-            height: tileSize,
+            width: tileSize * scaling,
+            height: tileSize * scaling,
             subdivisions: textureSize
         }, scene);
         water.material = waterMaterial;
-        water.position.x = x * tileSize;
-        water.position.z = z * tileSize;
+        water.position.x = x * tileSize * scaling;
+        water.position.z = z * tileSize * scaling;
     }
 }
 

@@ -31,9 +31,9 @@ export class OceanPlanetMaterial extends ShaderMaterial {
     readonly textureSize: number;
 
     /**
-     * The scale of the ocean tiles. A higher value will make the waves smaller and more frequent.
+     * The size of the ocean tiles.
      */
-    readonly tileScale: number;
+    readonly tileSize: number;
 
     readonly reflectionTexture: CubeTexture;
 
@@ -91,7 +91,7 @@ export class OceanPlanetMaterial extends ShaderMaterial {
         }
         super(name, scene, "oceanPlanet", {
             attributes: ["position", "normal"],
-            uniforms: ["world", "worldView", "worldViewProjection", "view", "projection", "cameraPositionW", "lightDirection", "planetWorld", "planetInverseWorld", "tileScale"],
+            uniforms: ["world", "worldView", "worldViewProjection", "view", "projection", "cameraPositionW", "lightDirection", "planetWorld", "planetInverseWorld", "tileSize"],
             samplers: ["heightMap", "gradientMap", "displacementMap", "reflectionSampler", "depthSampler", "textureSampler"]
         });
         this.depthRenderer = scene.enableDepthRenderer(scene.activeCamera, false, true);
@@ -115,7 +115,7 @@ export class OceanPlanetMaterial extends ShaderMaterial {
         }
 
         this.textureSize = initialSpectrum.textureSize;
-        this.tileScale = initialSpectrum.tileScale;
+        this.tileSize = initialSpectrum.tileSize;
 
         this.initialSpectrum = initialSpectrum;
         this.dynamicSpectrum = new DynamicSpectrum(this.initialSpectrum, scene.getEngine());
@@ -156,7 +156,7 @@ export class OceanPlanetMaterial extends ShaderMaterial {
 
         this.setVector3("lightDirection", lightDirection);
 
-        this.setFloat("tileScale", this.tileScale);
+        this.setFloat("tileSize", this.tileSize);
 
         this.setMatrix("planetWorld", planetTransform.getWorldMatrix());
         this.setMatrix("planetInverseWorld", planetTransform.getWorldMatrix().clone().invert());

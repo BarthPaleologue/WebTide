@@ -15,7 +15,7 @@ uniform sampler2D heightMap;
 uniform sampler2D gradientMap;
 uniform sampler2D displacementMap;
 
-uniform float tileScale;
+uniform float tileSize;
 
 varying vec3 vNormalW;
 varying vec3 vPositionW;
@@ -46,7 +46,7 @@ vec3 sampleHeightAndGradient(vec3 point) {
 }
 
 void main() {
-    scalingFactor = 1.0 / (tileScale * tileScale);
+    scalingFactor = 1.0 / (tileSize * tileSize);
 
     vec3 positionWorldSpace = vec3(world * vec4(position, 1.0));
     vec3 positionPlanetSpace = vec3(planetInverseWorld * vec4(positionWorldSpace, 1.0));

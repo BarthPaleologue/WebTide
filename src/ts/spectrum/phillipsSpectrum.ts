@@ -27,11 +27,11 @@ export class PhillipsSpectrum implements InitialSpectrum {
 
     readonly textureSize;
 
-    readonly tileScale;
+    readonly tileSize;
 
-    constructor(textureSize: number, tileScale: number, engine: Engine) {
+    constructor(textureSize: number, tileSize: number, engine: Engine) {
         this.textureSize = textureSize;
-        this.tileScale = tileScale;
+        this.tileSize = tileSize;
 
         this.computeShader = new ComputeShader(
             "computeSpectrum",
@@ -53,14 +53,14 @@ export class PhillipsSpectrum implements InitialSpectrum {
         this.settings = new UniformBuffer(engine);
 
         this.settings.addUniform("textureSize", 1);
-        this.settings.addUniform("tileScale", 1);
+        this.settings.addUniform("tileSize", 1);
 
         this.computeShader.setStorageTexture("H0", this.h0);
         this.computeShader.setTexture("Noise", this.gaussianNoise, false);
         this.computeShader.setUniformBuffer("params", this.settings);
 
         this.settings.updateInt("textureSize", this.textureSize);
-        this.settings.updateFloat("tileScale", this.tileScale);
+        this.settings.updateFloat("tileSize", this.tileSize);
 
         this.settings.update();
 
