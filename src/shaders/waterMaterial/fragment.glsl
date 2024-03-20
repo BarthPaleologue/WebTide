@@ -1,8 +1,6 @@
 precision highp float;
 
 varying vec3 vNormalW;
-varying vec2 vUV;
-varying vec3 vPosition;
 varying vec3 vPositionW;
 varying vec4 vPositionClip;
 

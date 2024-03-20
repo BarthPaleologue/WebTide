@@ -12,8 +12,6 @@ uniform sampler2D gradientMap;
 uniform sampler2D displacementMap;
 
 varying vec3 vNormalW;
-varying vec2 vUV;
-varying vec3 vPosition;
 varying vec3 vPositionW;
 varying vec4 vPositionClip;
 
@@ -44,10 +42,8 @@ void main() {
     vec3 tangent2 = normalize(vec3(uv.x, sampleHeightAndGradient(uv + vec2(0.0, epsilon)).x, uv.y + epsilon) - vec3(uv.x, sampleHeightAndGradient(uv - vec2(0.0, epsilon)).x, uv.y - epsilon));
     vec3 normal = -normalize(cross(tangent1, tangent2));*/
 
-    vPosition = waterPosition;
     vPositionW = vec3(world * vec4(waterPosition, 1.0));
     vNormalW = vec3(world * vec4(normal, 0.0));
-    vUV = uv;
     vPositionClip = worldViewProjection * vec4(waterPosition, 1.0);
 
     gl_Position = vPositionClip;
