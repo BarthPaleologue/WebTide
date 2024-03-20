@@ -26,9 +26,9 @@ fn computeSpectrum(@builtin(global_invocation_id) id: vec3<u32>) {
     let iid = vec3<i32>(id);
 
     let deltaK = 2.0 * PI / params.tileScale;
-    let nx = f32(id.x) - f32(params.textureSize) / 2.0;
-    let nz = f32(id.y) - f32(params.textureSize) / 2.0;
-    let k = vec2<f32>(nx, nz) * deltaK;
+    let n = f32(id.x) - f32(params.textureSize) / 2.0;
+    let m = f32(id.y) - f32(params.textureSize) / 2.0;
+    let k = vec2<f32>(n, m) * deltaK;
 
 	let theta = params.elapsedSeconds * omega(k);
 	let exponent = vec2<f32>(cos(theta), sin(theta));
