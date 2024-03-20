@@ -41,7 +41,7 @@ vec3 aces_tonemap(vec3 color) {
 float getFogFactor(float d, vec3 rayDir) {
     const float LOG2 = 1.442695;
     const float density = 400.0;
-    const float start = 0.0;
+    const float start = 0.3;
     const float end = 1.0;
     float fogFactor = exp2(-density * density * d * d * LOG2);
     fogFactor = 1.0 - clamp((fogFactor - start) / (end - start), 0.0, 1.0);
