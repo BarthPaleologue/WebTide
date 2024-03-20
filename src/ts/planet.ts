@@ -61,7 +61,6 @@ skyboxMaterial.reflectionTexture.coordinatesMode = Texture.SKYBOX_MODE;
 skyboxMaterial.disableLighting = true;
 skybox.material = skyboxMaterial;
 
-
 function updateScene() {
     const deltaSeconds = engine.getDeltaTime() / 1000;
     waterMaterial.update(deltaSeconds, light.direction);

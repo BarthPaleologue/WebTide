@@ -104,8 +104,12 @@ export class OceanPlanetMaterial extends ShaderMaterial {
         this.setTexture("textureSampler", this.screenRenderTarget);
 
         this.reflectionTexture = new CubeTexture("", scene, null, false, [
-            TropicalSunnyDay_ny, TropicalSunnyDay_ny, TropicalSunnyDay_ny,
-            TropicalSunnyDay_ny, TropicalSunnyDay_ny, TropicalSunnyDay_ny
+            TropicalSunnyDay_ny,
+            TropicalSunnyDay_ny,
+            TropicalSunnyDay_ny,
+            TropicalSunnyDay_ny,
+            TropicalSunnyDay_ny,
+            TropicalSunnyDay_ny
         ]);
         //this.reflectionTexture.coordinatesMode = Constants.TEXTURE_CUBE_MAP;
         this.setTexture("reflectionSampler", this.reflectionTexture);
@@ -141,7 +145,7 @@ export class OceanPlanetMaterial extends ShaderMaterial {
         this.elapsedSeconds += deltaSeconds;
         this.dynamicSpectrum.generate(this.elapsedSeconds);
 
-        const allNonWaterMeshes = this.getScene().meshes.filter(mesh => mesh.material !== this);
+        const allNonWaterMeshes = this.getScene().meshes.filter((mesh) => mesh.material !== this);
 
         this.depthRenderer.getDepthMap().renderList = allNonWaterMeshes;
         this.screenRenderTarget.renderList = allNonWaterMeshes;

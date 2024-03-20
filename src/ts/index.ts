@@ -31,8 +31,9 @@ const engine = new WebGPUEngine(canvas, { antialias: true });
 engine.loadingScreen.displayLoadingUI();
 await engine.initAsync();
 
-if (!await WebGPUEngine.IsSupportedAsync) {
-    engine.loadingScreen.loadingUIText = "WebGPU is not supported in your browser. Please check the compatibility here: https://github.com/gpuweb/gpuweb/wiki/Implementation-Status#implementation-status";
+if (!(await WebGPUEngine.IsSupportedAsync)) {
+    engine.loadingScreen.loadingUIText =
+        "WebGPU is not supported in your browser. Please check the compatibility here: https://github.com/gpuweb/gpuweb/wiki/Implementation-Status#implementation-status";
 }
 
 const scene = new Scene(engine);
@@ -53,7 +54,6 @@ const tileSize = 10;
 const depthRenderer = scene.enableDepthRenderer(camera, false, true);
 const initialSpectrum = new PhillipsSpectrum(textureSize, tileSize, engine);
 const waterMaterial = new WaterMaterial("waterMaterial", initialSpectrum, scene);
-
 
 const oceanPlanetMaterial = new OceanPlanetMaterial("oceanPlanet", initialSpectrum, scene);
 const planetRadius = 2;
@@ -76,20 +76,28 @@ groundMaterial.specularColor.scaleInPlace(0);
 
 const radius = 3;
 
-const ground = MeshBuilder.CreateGround("ground", {
-    width: tileSize * radius * 4,
-    height: tileSize * radius * 4
-}, scene);
+const ground = MeshBuilder.CreateGround(
+    "ground",
+    {
+        width: tileSize * radius * 4,
+        height: tileSize * radius * 4
+    },
+    scene
+);
 ground.material = groundMaterial;
 ground.position.y = -2;
 
 for (let x = -radius; x <= radius; x++) {
     for (let z = -radius; z <= radius; z++) {
-        const water = MeshBuilder.CreateGround("water", {
-            width: tileSize,
-            height: tileSize,
-            subdivisions: textureSize
-        }, scene);
+        const water = MeshBuilder.CreateGround(
+            "water",
+            {
+                width: tileSize,
+                height: tileSize,
+                subdivisions: textureSize
+            },
+            scene
+        );
         water.material = waterMaterial;
         water.position.x = x * tileSize;
         water.position.z = z * tileSize;
@@ -97,7 +105,16 @@ for (let x = -radius; x <= radius; x++) {
 }
 
 Effect.ShadersStore[`PostProcess1FragmentShader`] = postProcessCode;
-const postProcess = new PostProcess("postProcess1", "PostProcess1", ["cameraInverseView", "cameraInverseProjection", "cameraPosition"], ["textureSampler", "depthSampler"], 1, camera, Texture.BILINEAR_SAMPLINGMODE, engine);
+const postProcess = new PostProcess(
+    "postProcess1",
+    "PostProcess1",
+    ["cameraInverseView", "cameraInverseProjection", "cameraPosition"],
+    ["textureSampler", "depthSampler"],
+    1,
+    camera,
+    Texture.BILINEAR_SAMPLINGMODE,
+    engine
+);
 postProcess.onApplyObservable.add((effect) => {
     effect.setTexture("depthSampler", depthRenderer.getDepthMap());
     effect.setMatrix("cameraInverseView", camera.getViewMatrix().clone().invert());

@@ -45,5 +45,4 @@ export class CopyComputeShader {
 
         this.computeShader.dispatch(Math.ceil(width / 8), Math.ceil(height / 8), 1);
     }
-
 }

@@ -33,7 +33,7 @@ export class PhillipsSpectrum implements InitialSpectrum {
         windTheta: 0.0,
         windSpeed: 31.0,
         smallWaveLengthCutOff: 0.01
-    }
+    };
 
     constructor(textureSize: number, tileSize: number, engine: Engine) {
         this.textureSize = textureSize;

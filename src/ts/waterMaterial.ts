@@ -107,8 +107,12 @@ export class WaterMaterial extends ShaderMaterial {
         this.setTexture("textureSampler", this.screenRenderTarget);
 
         this.reflectionTexture = new CubeTexture("", scene, null, false, [
-            TropicalSunnyDay_px, TropicalSunnyDay_py, TropicalSunnyDay_pz,
-            TropicalSunnyDay_nx, TropicalSunnyDay_ny, TropicalSunnyDay_nz
+            TropicalSunnyDay_px,
+            TropicalSunnyDay_py,
+            TropicalSunnyDay_pz,
+            TropicalSunnyDay_nx,
+            TropicalSunnyDay_ny,
+            TropicalSunnyDay_nz
         ]);
         //this.reflectionTexture.coordinatesMode = Constants.TEXTURE_CUBE_MAP;
         this.setTexture("reflectionSampler", this.reflectionTexture);
@@ -143,7 +147,7 @@ export class WaterMaterial extends ShaderMaterial {
         this.elapsedSeconds += deltaSeconds;
         this.dynamicSpectrum.generate(this.elapsedSeconds);
 
-        const allNonWaterMeshes = this.getScene().meshes.filter(mesh => mesh.material !== this);
+        const allNonWaterMeshes = this.getScene().meshes.filter((mesh) => mesh.material !== this);
 
         this.depthRenderer.getDepthMap().renderList = allNonWaterMeshes;
         this.screenRenderTarget.renderList = allNonWaterMeshes;
