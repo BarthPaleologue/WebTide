@@ -80,10 +80,10 @@ export class WaterMaterial extends ShaderMaterial {
 
     /**
      * The elapsed time in seconds since the simulation started.
-     * Starting at 0 creates some visual artefacts, so we start at 1 hour to avoid them.
+     * Starting at 0 creates some visual artefacts, so we start at 1 min to avoid them.
      * @private
      */
-    private elapsedSeconds = 3600;
+    private elapsedSeconds = 60;
 
     constructor(name: string, initialSpectrum: InitialSpectrum, scene: Scene) {
         if (Effect.ShadersStore["oceanVertexShader"] === undefined) {
