@@ -26,12 +26,18 @@ An online demo is available [here](https://barthpaleologue.github.io/WebTide/).
 Using the ocean in your own project is straightforward:
 
 ```ts
+// This is the resolution of the wave spectrum. Bigger is better but slower.
 const textureSize = 512;
+// This is the size of the water plane in meters.
 const tileSize = 10;
 
+// Define your base spectrum
 const initialSpectrum = new PhillipsSpectrum(textureSize, tileSize, engine);
+
+// Create the water material
 const waterMaterial = new WaterMaterial("waterMaterial", initialSpectrum, scene);
 
+// Create a subdivided plane
 const water = MeshBuilder.CreateGround(
     "water",
     {
@@ -41,7 +47,21 @@ const water = MeshBuilder.CreateGround(
     },
     scene
 );
+
+// Assign the water material to the plane
 water.material = waterMaterial;
+
+// The method to update the material every frame
+function updateScene() {
+    const deltaSeconds = engine.getDeltaTime() / 1000;
+    waterMaterial.update(deltaSeconds, light.direction);
+}
+
+// Register the update method to the scene
+scene.executeWhenReady(() => {
+    scene.registerBeforeRender(() => updateScene());
+    engine.runRenderLoop(() => scene.render());
+});
 ```
 
 You can have a look at the code in `src/ts/minimal.ts` for the simplest example possible.
@@ -74,16 +94,13 @@ I made this simulation using many different resources found online:
 
 - Sand texture from [Engin Akyurt](https://unsplash.com/fr/photos/personne-portant-une-chaussure-en-cuir-noir-0uiRqKME5N4)
 
-## Build
+## Run locally
 
-```
-npm run build
-```
+To run the project locally, you need to have Node.js installed. Then, run the following commands:
 
-or
-
-```
-yarn build
+```bash
+pnpm install
+pnpm run serve
 ```
 
-to bundle your application
+If you don't have `pnpm` installed, you can install it with `npm install -g pnpm`.
