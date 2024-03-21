@@ -6,7 +6,7 @@
 
 WebTide is an ocean simulation based on [Jerry Tessendorf's paper](https://people.computing.clemson.edu/~jtessen/reports/papers_files/coursenotes2004.pdf), implemented on WebGPU with BabylonJS.
 
-This was my final project for the INF585 "Computer Animation" course at École Polytechnique.
+This was my final project for the INF585 "Computer Animation" course at École Polytechnique. The report is online [on my blog](https://barthpaleologue.github.io/Blog/posts/ocean-simulation-webgpu/).
 
 An online demo is available [here](https://barthpaleologue.github.io/WebTide/).
 
@@ -14,6 +14,7 @@ An online demo is available [here](https://barthpaleologue.github.io/WebTide/).
 
 - [x] GPU-based FFT
 - [x] Phillips spectrum
+- [ ] JONSWAP spectrum
 - [x] Wave vertices vertical displacement
 - [x] Choppy waves (waves vertices horizontal displacement)
 - [x] Physically based ocean shading
