@@ -44,6 +44,6 @@ fn computeSpectrum(@builtin(global_invocation_id) id: vec3<u32>) {
 	let displacement = ikh / (length(k) + 0.001);
 
     textureStore(HT, iid.xy, vec4<f32>(h, vec2(0.0)));
-    textureStore(DHT, iid.xy, vec4<f32>(ikh * params.tileSize, vec2(0.0)));
+    textureStore(DHT, iid.xy, vec4<f32>(ikh, vec2(0.0)));
     textureStore(Displacement, iid.xy, vec4<f32>(displacement, vec2(0.0)));
 }

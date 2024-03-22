@@ -39,14 +39,14 @@ vec3 triplanarSample(vec3 position, sampler2D textureToSample, float scale, floa
 
 vec3 sampleHeightAndGradient(vec3 point) {
     float height = triplanarSample(point, heightMap, triPlanarScale, 0.5).r;
-    vec2 gradient = triplanarSample(point, gradientMap, triPlanarScale, 0.5).rg * 0.1; // the 0.5 here is just for artistic reasons
+    vec2 gradient = triplanarSample(point, gradientMap, triPlanarScale, 0.5).rg;
     vec3 heightAndGradient = vec3(height, gradient);
 
-    return heightAndGradient * scalingFactor * 2.0;
+    return heightAndGradient * scalingFactor * 0.5;
 }
 
 void main() {
-    scalingFactor = 1.0 / (tileSize * tileSize);
+    scalingFactor = 1.0 / tileSize;
 
     vec3 positionWorldSpace = vec3(world * vec4(position, 1.0));
     vec3 positionPlanetSpace = vec3(planetInverseWorld * vec4(positionWorldSpace, 1.0));
@@ -64,10 +64,8 @@ void main() {
     vec3 tangent1 = vec3(-sin(phi), 0.0, cos(phi));
     vec3 tangent2 = vec3(cos(theta) * cos(phi), -sin(theta), cos(theta) * sin(phi));
 
-    vec2 displacement = triplanarSample(positionPlanetSpace, displacementMap, triPlanarScale, 0.5).rg * scalingFactor * 0.5;
+    vec2 displacement = triplanarSample(positionPlanetSpace, displacementMap, triPlanarScale, 0.5).rg * scalingFactor;
     waterPosition += tangent1 * displacement.x + tangent2 * displacement.y;
-    //waterPosition.x += displacement.x;
-    //waterPosition.z += displacement.y;
 
     vec3 heightAndGradient = sampleHeightAndGradient(positionPlanetSpace);
     waterPosition += planetNormal * heightAndGradient.x;
