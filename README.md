@@ -8,7 +8,7 @@ WebTide is an ocean simulation based on [Jerry Tessendorf's paper](https://peopl
 
 This was my final project for the INF585 "Computer Animation" course at École Polytechnique. The report is online [on my blog](https://barthpaleologue.github.io/Blog/posts/ocean-simulation-webgpu/).
 
-An online demo is available [here](https://barthpaleologue.github.io/WebTide/).
+An online demo is available [here](https://barthpaleologue.github.io/WebTide/), and the spherical version is available [here](https://barthpaleologue.github.io/WebTide/planet.html).
 
 ## Features
 
