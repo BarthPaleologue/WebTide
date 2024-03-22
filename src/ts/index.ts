@@ -38,7 +38,7 @@ await engine.initAsync();
 
 const scene = new Scene(engine);
 
-const camera = new ArcRotateCamera("camera", 3.14 / 3, 0.02 + 3.14 / 2, 5, new Vector3(0, 0.8, 0), scene);
+const camera = new ArcRotateCamera("camera", 3.14 / 3, 0.02 + 3.14 / 2, 15, new Vector3(0, 1.5, 0), scene);
 camera.wheelPrecision = 100;
 camera.angularSensibilityX = 3000;
 camera.angularSensibilityY = 3000;

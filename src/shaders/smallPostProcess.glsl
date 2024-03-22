@@ -46,7 +46,7 @@ float getFogFactor(float d, vec3 rayDir) {
     float fogFactor = exp2(-density * density * d * d * LOG2);
     fogFactor = 1.0 - clamp((fogFactor - start) / (end - start), 0.0, 1.0);
 
-    fogFactor *= pow(1.0 - abs(dot(rayDir, vec3(0.0, 1.0, 0.0))), 4.0); // fog is not applied to the sky (upwards direction
+    fogFactor *= pow(1.0 - abs(rayDir.y), 4.0); // fog is not applied to the sky (upwards direction
 
     return fogFactor;
 }
