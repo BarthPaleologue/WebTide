@@ -64,7 +64,7 @@ void main() {
     vec3 tangent1 = vec3(-sin(phi), 0.0, cos(phi));
     vec3 tangent2 = vec3(cos(theta) * cos(phi), -sin(theta), cos(theta) * sin(phi));
 
-    vec2 displacement = triplanarSample(positionPlanetSpace, displacementMap, triPlanarScale, 0.5).rg * scalingFactor;
+    vec2 displacement = triplanarSample(positionPlanetSpace, displacementMap, triPlanarScale, 0.5).rg * scalingFactor * 0.2;
     waterPosition += tangent1 * displacement.x + tangent2 * displacement.y;
 
     vec3 heightAndGradient = sampleHeightAndGradient(positionPlanetSpace);
