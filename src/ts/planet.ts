@@ -23,13 +23,14 @@ await engine.initAsync();
 
 const scene = new Scene(engine);
 
-const camera = new ArcRotateCamera("camera", 3.14 / 3, 3.14 / 3, 15, Vector3.Zero(), scene);
+const textureSize = 512;
+const tileSize = 10;
+
+const camera = new ArcRotateCamera("camera", 3.14 / 3, 3.14 / 3, tileSize * 1.5, Vector3.Zero(), scene);
+camera.lowerRadiusLimit = tileSize;
 camera.attachControl();
 
 const light = new DirectionalLight("light", new Vector3(1, -1, 3).normalize(), scene);
-
-const textureSize = 512;
-const tileSize = 10;
 
 const initialSpectrum = new PhillipsSpectrum(textureSize, tileSize, engine);
 const waterMaterial = new WaterMaterial("waterMaterial", initialSpectrum, scene);
@@ -47,7 +48,7 @@ water.material = waterMaterial;
 water.position.y = -1;
 
 const oceanPlanetMaterial = new OceanPlanetMaterial("oceanPlanet", initialSpectrum, scene);
-const planetRadius = 2;
+const planetRadius = tileSize / 2;
 const planet = new Planet(planetRadius, oceanPlanetMaterial, scene);
 planet.transform.position.y = planetRadius + 1;
 

@@ -21,18 +21,18 @@ varying vec3 vNormalW;
 varying vec3 vPositionW;
 varying vec4 vPositionClip;
 
-float scalingFactor;
+float scalingFactor = 1.0 / tileSize;
 
-const float triPlanarScale = 1.0;
+float triPlanarScale = 0.5 / tileSize;
 
 #define inline
 vec3 triplanarSample(vec3 position, sampler2D textureToSample, vec3 normal , float scale, float blend) {
     vec3 blendFactors = abs(normal);
     blendFactors /= (blendFactors.x + blendFactors.y + blendFactors.z);
 
-    vec3 x = texture2D(textureToSample, position.yz / scale).xyz;
-    vec3 y = texture2D(textureToSample, position.xz / scale).xyz;
-    vec3 z = texture2D(textureToSample, position.xy / scale).xyz;
+    vec3 x = texture2D(textureToSample, position.yz * scale).xyz;
+    vec3 y = texture2D(textureToSample, position.xz * scale).xyz;
+    vec3 z = texture2D(textureToSample, position.xy * scale).xyz;
 
     return x * blendFactors.x + y * blendFactors.y + z * blendFactors.z;
 }
@@ -42,12 +42,10 @@ vec3 sampleHeightAndGradient(vec3 point, vec3 normal) {
     vec2 gradient = triplanarSample(point, gradientMap, normal, triPlanarScale, 0.5).rg;
     vec3 heightAndGradient = vec3(height, gradient);
 
-    return heightAndGradient * scalingFactor * 0.2;
+    return heightAndGradient * scalingFactor * 0.5;
 }
 
 void main() {
-    scalingFactor = 1.0 / tileSize;
-
     vec3 positionWorldSpace = vec3(world * vec4(position, 1.0));
     vec3 positionPlanetSpace = vec3(planetInverseWorld * vec4(positionWorldSpace, 1.0));
 
