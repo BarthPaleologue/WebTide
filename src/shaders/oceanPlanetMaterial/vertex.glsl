@@ -26,23 +26,23 @@ float scalingFactor;
 const float triPlanarScale = 1.0;
 
 #define inline
-vec3 triplanarSample(vec3 position, sampler2D textureToSample, float scale, float blend) {
-    vec3 x = texture2D(textureToSample, position.yz).xyz;
-    vec3 y = texture2D(textureToSample, position.zx).xyz;
-    vec3 z = texture2D(textureToSample, position.xy).xyz;
+vec3 triplanarSample(vec3 position, sampler2D textureToSample, vec3 normal , float scale, float blend) {
+    vec3 blendFactors = abs(normal);
+    blendFactors /= (blendFactors.x + blendFactors.y + blendFactors.z);
 
-    vec3 result = x * (1.0 - blend) + y * blend;
-    result = mix(result, z, blend);
+    vec3 x = texture2D(textureToSample, position.yz / scale).xyz;
+    vec3 y = texture2D(textureToSample, position.xz / scale).xyz;
+    vec3 z = texture2D(textureToSample, position.xy / scale).xyz;
 
-    return result * scale;
+    return x * blendFactors.x + y * blendFactors.y + z * blendFactors.z;
 }
 
-vec3 sampleHeightAndGradient(vec3 point) {
-    float height = triplanarSample(point, heightMap, triPlanarScale, 0.5).r;
-    vec2 gradient = triplanarSample(point, gradientMap, triPlanarScale, 0.5).rg;
+vec3 sampleHeightAndGradient(vec3 point, vec3 normal) {
+    float height = triplanarSample(point, heightMap, normal, triPlanarScale, 0.5).r;
+    vec2 gradient = triplanarSample(point, gradientMap, normal, triPlanarScale, 0.5).rg;
     vec3 heightAndGradient = vec3(height, gradient);
 
-    return heightAndGradient * scalingFactor * 0.5;
+    return heightAndGradient * scalingFactor * 0.2;
 }
 
 void main() {
@@ -64,10 +64,10 @@ void main() {
     vec3 tangent1 = vec3(-sin(phi), 0.0, cos(phi));
     vec3 tangent2 = vec3(cos(theta) * cos(phi), -sin(theta), cos(theta) * sin(phi));
 
-    vec2 displacement = triplanarSample(positionPlanetSpace, displacementMap, triPlanarScale, 0.5).rg * scalingFactor * 0.2;
+    vec2 displacement = triplanarSample(positionPlanetSpace, displacementMap, planetNormal, triPlanarScale, 0.5).rg * scalingFactor * 0.2;
     waterPosition += tangent1 * displacement.x + tangent2 * displacement.y;
 
-    vec3 heightAndGradient = sampleHeightAndGradient(positionPlanetSpace);
+    vec3 heightAndGradient = sampleHeightAndGradient(positionPlanetSpace, planetNormal);
     waterPosition += planetNormal * heightAndGradient.x;
 
     vec3 normal = normalize(planetNormal - heightAndGradient.y * tangent1 - heightAndGradient.z * tangent2);
