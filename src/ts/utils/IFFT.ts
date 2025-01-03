@@ -62,7 +62,7 @@ export class IFFT {
         this.settings.updateInt("textureSize", this.textureSize);
         this.settings.update();
 
-        this.precompute.dispatch(logSize, this.textureSize / 2 / 8, 1);
+        this.precompute.dispatchWhenReady(logSize, this.textureSize / 2 / 8, 1);
 
         this.horizontalStepIFFT = new ComputeShader(
             "horizontalStepIFFT",

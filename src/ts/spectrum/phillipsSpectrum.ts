@@ -76,7 +76,7 @@ export class PhillipsSpectrum implements InitialSpectrum {
 
         this.uniformBuffer.update();
 
-        this.computeShader.dispatch(Math.ceil(this.textureSize / 8), Math.ceil(this.textureSize / 8), 1);
+        this.computeShader.dispatchWhenReady(Math.ceil(this.textureSize / 8), Math.ceil(this.textureSize / 8), 1);
     }
 
     /**
