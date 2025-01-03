@@ -1,4 +1,4 @@
-import "../styles/index.scss";
+import "../styles/index.css";
 
 import { Scene } from "@babylonjs/core/scene";
 import { Vector3 } from "@babylonjs/core/Maths/math.vector";
@@ -28,7 +28,7 @@ const textureSize = 512;
 const tileSize = 10;
 
 const initialSpectrum = new PhillipsSpectrum(textureSize, tileSize, engine);
-const waterMaterial = new WaterMaterial("waterMaterial", initialSpectrum, scene);
+const waterMaterial = new WaterMaterial("waterMaterial", initialSpectrum, scene, engine);
 
 const water = MeshBuilder.CreateGround(
     "water",

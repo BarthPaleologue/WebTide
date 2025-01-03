@@ -2,6 +2,7 @@ import { Scene } from "@babylonjs/core/scene";
 import { Mesh } from "@babylonjs/core/Meshes/mesh";
 import { Quaternion, Vector3 } from "@babylonjs/core/Maths/math.vector";
 import { computeVertexData } from "./computeVertexData";
+import { WebGPUEngine } from "@babylonjs/core/Engines/webgpuEngine";
 
 export enum Direction {
     FRONT,
@@ -42,10 +43,10 @@ export class PlanetChunk {
         this.direction = direction;
     }
 
-    async init(scene: Scene) {
-        if (!scene.getEngine().getCaps().supportComputeShaders) throw new Error("Compute shaders are not supported");
+    async init(engine: WebGPUEngine) {
+        if (!engine.getCaps().supportComputeShaders) throw new Error("Compute shaders are not supported");
 
-        const vertexData = await computeVertexData(this.nbVerticesPerRow, this.mesh.position, rotationFromDirection(this.direction), this.size, scene.getEngine());
+        const vertexData = await computeVertexData(this.nbVerticesPerRow, this.mesh.position, rotationFromDirection(this.direction), this.size, engine);
         vertexData.applyToMesh(this.mesh);
     }
 }

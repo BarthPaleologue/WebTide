@@ -6,7 +6,7 @@ import { InitialSpectrum } from "./initialSpectrum";
 
 import spectrumWGSL from "../../shaders/phillipsSpectrum.wgsl";
 import { BaseTexture } from "@babylonjs/core/Materials/Textures/baseTexture";
-import { Engine } from "@babylonjs/core/Engines/engine";
+import { AbstractEngine } from "@babylonjs/core/Engines/abstractEngine";
 
 /**
  * The Phillips spectrum is a common choice for the initial spectrum in ocean simulation.
@@ -35,7 +35,7 @@ export class PhillipsSpectrum implements InitialSpectrum {
         smallWaveLengthCutOff: 0.01
     };
 
-    constructor(textureSize: number, tileSize: number, engine: Engine) {
+    constructor(textureSize: number, tileSize: number, engine: AbstractEngine) {
         this.textureSize = textureSize;
         this.tileSize = tileSize;
 
@@ -76,7 +76,7 @@ export class PhillipsSpectrum implements InitialSpectrum {
 
         this.uniformBuffer.update();
 
-        this.computeShader.dispatch(Math.ceil(this.textureSize / 8), Math.ceil(this.textureSize / 8), 1);
+        this.computeShader.dispatchWhenReady(Math.ceil(this.textureSize / 8), Math.ceil(this.textureSize / 8), 1);
     }
 
     /**

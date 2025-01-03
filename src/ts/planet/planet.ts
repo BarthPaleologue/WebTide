@@ -1,3 +1,4 @@
+import { WebGPUEngine } from "@babylonjs/core/Engines/webgpuEngine";
 import { Scene } from "@babylonjs/core/scene";
 import { TransformNode } from "@babylonjs/core/Meshes/transformNode";
 import { Direction, PlanetChunk } from "./planetChunk";
@@ -8,7 +9,7 @@ export class Planet {
     readonly chunks: PlanetChunk[];
     readonly material: Material;
 
-    constructor(radius: number, material: Material, scene: Scene) {
+    constructor(radius: number, material: Material, scene: Scene, engine: WebGPUEngine) {
         this.transform = new TransformNode("planet", scene);
 
         this.chunks = [
@@ -25,7 +26,7 @@ export class Planet {
         this.chunks.forEach(async (chunk) => {
             chunk.mesh.parent = this.transform;
             chunk.mesh.material = this.material;
-            await chunk.init(scene);
+            await chunk.init(engine);
         });
     }
 }

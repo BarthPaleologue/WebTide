@@ -1,12 +1,12 @@
 import heightMapComputeSource from "./vertexData.wgsl";
 import { VertexData } from "@babylonjs/core/Meshes/mesh.vertexData";
-import { Engine } from "@babylonjs/core/Engines/engine";
 import { ComputeShader } from "@babylonjs/core/Compute/computeShader";
 import { StorageBuffer } from "@babylonjs/core/Buffers/storageBuffer";
 import { UniformBuffer } from "@babylonjs/core/Materials/uniformBuffer";
 import { Matrix, Quaternion, Vector3 } from "@babylonjs/core/Maths/math.vector";
+import { WebGPUEngine } from "@babylonjs/core/Engines/webgpuEngine";
 
-export async function computeVertexData(nbVerticesPerRow: number, position: Vector3, rotation: Quaternion, size: number, engine: Engine): Promise<VertexData> {
+export async function computeVertexData(nbVerticesPerRow: number, position: Vector3, rotation: Quaternion, size: number, engine: WebGPUEngine): Promise<VertexData> {
     const computeShader = new ComputeShader(
         "heightMap",
         engine,

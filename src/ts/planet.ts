@@ -1,4 +1,4 @@
-import "../styles/index.scss";
+import "../styles/index.css";
 
 import { Scene } from "@babylonjs/core/scene";
 import { Vector3 } from "@babylonjs/core/Maths/math.vector";
@@ -33,7 +33,7 @@ camera.attachControl();
 const light = new DirectionalLight("light", new Vector3(1, -1, 3).normalize(), scene);
 
 const initialSpectrum = new PhillipsSpectrum(textureSize, tileSize, engine);
-const waterMaterial = new WaterMaterial("waterMaterial", initialSpectrum, scene);
+const waterMaterial = new WaterMaterial("waterMaterial", initialSpectrum, scene, engine);
 
 const water = MeshBuilder.CreateGround(
     "water",
@@ -47,9 +47,9 @@ const water = MeshBuilder.CreateGround(
 water.material = waterMaterial;
 water.position.y = -1;
 
-const oceanPlanetMaterial = new OceanPlanetMaterial("oceanPlanet", initialSpectrum, scene);
+const oceanPlanetMaterial = new OceanPlanetMaterial("oceanPlanet", initialSpectrum, scene, engine);
 const planetRadius = tileSize / 2;
-const planet = new Planet(planetRadius, oceanPlanetMaterial, scene);
+const planet = new Planet(planetRadius, oceanPlanetMaterial, scene, engine);
 planet.transform.position.y = planetRadius + 1;
 
 camera.setTarget(planet.transform.getAbsolutePosition());

@@ -2,7 +2,7 @@
 
 [![NodeJS with Webpack](https://github.com/BarthPaleologue/babylonjs-template/actions/workflows/webpack.yml/badge.svg)](https://github.com/BarthPaleologue/babylonjs-template/actions/workflows/webpack.yml)
 
-![img.png](cover.png)
+[![img.png](cover.png)](https://barthpaleologue.github.io/WebTide/)
 
 WebTide is an ocean simulation based on [Jerry Tessendorf's paper](https://people.computing.clemson.edu/~jtessen/reports/papers_files/coursenotes2004.pdf), implemented on WebGPU with BabylonJS.
 

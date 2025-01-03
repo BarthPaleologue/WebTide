@@ -1,14 +1,14 @@
 import { Texture } from "@babylonjs/core/Materials/Textures/texture";
 import { Scene } from "@babylonjs/core/scene";
 import { MeshBuilder } from "@babylonjs/core/Meshes/meshBuilder";
-import { ThinEngine } from "@babylonjs/core/Engines/thinEngine";
 import { RawTexture } from "@babylonjs/core/Materials/Textures/rawTexture";
 import { Constants } from "@babylonjs/core/Engines/constants";
 import { BaseTexture } from "@babylonjs/core/Materials/Textures/baseTexture";
 import { Mesh } from "@babylonjs/core/Meshes/mesh";
 import { StandardMaterial } from "@babylonjs/core/Materials/standardMaterial";
+import { AbstractEngine } from "@babylonjs/core/Engines/abstractEngine";
 
-export function createStorageTexture(name: string, engine: ThinEngine, width: number, height: number, textureFormat: number): Texture {
+export function createStorageTexture(name: string, engine: AbstractEngine, width: number, height: number, textureFormat: number): Texture {
     const texture = new RawTexture(
         null,
         width,
@@ -35,7 +35,7 @@ export function gaussianRandom() {
     return Math.cos(2 * Math.PI * Math.random()) * Math.sqrt(-2 * Math.log(Math.random()));
 }
 
-export function createGaussianNoiseTexture(textureSize: number, engine: ThinEngine) {
+export function createGaussianNoiseTexture(textureSize: number, engine: AbstractEngine) {
     const dataArray = new Uint8Array(textureSize * textureSize * 2);
     for (let i = 0; i < dataArray.length; i += 2) {
         dataArray[i] = gaussianRandom();

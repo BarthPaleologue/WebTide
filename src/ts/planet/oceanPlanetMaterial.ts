@@ -15,10 +15,10 @@ import { CubeTexture } from "@babylonjs/core/Materials/Textures/cubeTexture";
 import "@babylonjs/core/Rendering/depthRendererSceneComponent";
 import { DepthRenderer } from "@babylonjs/core/Rendering/depthRenderer";
 import { RenderTargetTexture } from "@babylonjs/core/Materials/Textures/renderTargetTexture";
+import { TransformNode } from "@babylonjs/core/Meshes/transformNode";
+import { WebGPUEngine } from "@babylonjs/core/Engines/webgpuEngine";
 
 import TropicalSunnyDay_ny from "../../assets/skybox/TropicalSunnyDay_ny.jpg";
-
-import { TransformNode } from "@babylonjs/core/Meshes/transformNode";
 
 /**
  * This material wraps the ocean around a sphere using triplanar mapping.
@@ -82,7 +82,7 @@ export class OceanPlanetMaterial extends ShaderMaterial {
      */
     private elapsedSeconds = 60;
 
-    constructor(name: string, initialSpectrum: InitialSpectrum, scene: Scene) {
+    constructor(name: string, initialSpectrum: InitialSpectrum, scene: Scene, engine: WebGPUEngine) {
         if (Effect.ShadersStore["oceanPlanetVertexShader"] === undefined) {
             Effect.ShadersStore["oceanPlanetVertexShader"] = vertex;
         }
@@ -122,12 +122,12 @@ export class OceanPlanetMaterial extends ShaderMaterial {
         this.tileSize = initialSpectrum.tileSize;
 
         this.initialSpectrum = initialSpectrum;
-        this.dynamicSpectrum = new DynamicSpectrum(this.initialSpectrum, scene.getEngine());
+        this.dynamicSpectrum = new DynamicSpectrum(this.initialSpectrum, engine);
 
-        this.ifft = new IFFT(scene.getEngine(), this.textureSize);
-        this.heightMap = createStorageTexture("heightBuffer", scene.getEngine(), this.textureSize, this.textureSize, Constants.TEXTUREFORMAT_RG);
-        this.gradientMap = createStorageTexture("gradientBuffer", scene.getEngine(), this.textureSize, this.textureSize, Constants.TEXTUREFORMAT_RG);
-        this.displacementMap = createStorageTexture("displacementBuffer", scene.getEngine(), this.textureSize, this.textureSize, Constants.TEXTUREFORMAT_RG);
+        this.ifft = new IFFT(engine, this.textureSize);
+        this.heightMap = createStorageTexture("heightBuffer", engine, this.textureSize, this.textureSize, Constants.TEXTUREFORMAT_RG);
+        this.gradientMap = createStorageTexture("gradientBuffer", engine, this.textureSize, this.textureSize, Constants.TEXTUREFORMAT_RG);
+        this.displacementMap = createStorageTexture("displacementBuffer", engine, this.textureSize, this.textureSize, Constants.TEXTUREFORMAT_RG);
 
         this.setTexture("heightMap", this.heightMap);
         this.setTexture("gradientMap", this.gradientMap);
