@@ -1,4 +1,4 @@
-import "../styles/index.scss";
+import "../styles/index.css";
 
 import { Scene } from "@babylonjs/core/scene";
 import { Vector3 } from "@babylonjs/core/Maths/math.vector";

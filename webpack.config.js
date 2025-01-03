@@ -8,11 +8,10 @@ const isProduction = process.env.NODE_ENV === "production";
 const htmlPath = path.join(__dirname, "/src/html/");
 
 const config = {
-
     entry: {
         index: "./src/ts/index.ts",
         minimal: "./src/ts/minimal.ts",
-        planet: "./src/ts/planet.ts",
+        planet: "./src/ts/planet.ts"
     },
     output: {
         path: path.resolve(__dirname, "dist")
@@ -45,7 +44,6 @@ const config = {
         new MiniCssExtractPlugin()
     ],
 
-
     module: {
         rules: [
             {
@@ -56,10 +54,6 @@ const config = {
             {
                 test: /\.css$/i,
                 use: [MiniCssExtractPlugin.loader, "css-loader"]
-            },
-            {
-                test: /\.s[ac]ss$/i,
-                use: [MiniCssExtractPlugin.loader, "css-loader", "sass-loader"]
             },
             {
                 test: /\.(eot|svg|ttf|woff|woff2|png|jpg|gif|glb|obj)$/i,
@@ -75,7 +69,6 @@ const config = {
                 exclude: /node_modules/,
                 use: ["ts-shader-loader"]
             }
-
 
             // Add your rules for custom modules here
             // Learn more about loaders from https://webpack.js.org/loaders/
@@ -96,6 +89,6 @@ module.exports = () => {
     config.experiments = {
         asyncWebAssembly: true,
         topLevelAwait: true
-    }
+    };
     return config;
 };
