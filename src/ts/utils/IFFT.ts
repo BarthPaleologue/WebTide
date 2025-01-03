@@ -1,4 +1,3 @@
-import { Engine } from "@babylonjs/core/Engines/engine";
 import { createStorageTexture } from "./utils";
 import twiddleFactors from "../../shaders/twiddleFactors.wgsl";
 import horizontalStep from "../../shaders/horizontalStepIfft.wgsl";
@@ -9,13 +8,14 @@ import { ComputeShader } from "@babylonjs/core/Compute/computeShader";
 import { BaseTexture } from "@babylonjs/core/Materials/Textures/baseTexture";
 import { UniformBuffer } from "@babylonjs/core/Materials/uniformBuffer";
 import { Constants } from "@babylonjs/core/Engines/constants";
+import { WebGPUEngine } from "@babylonjs/core/Engines/webgpuEngine";
 
 /**
  * The inverse fast fourier transform is the cornerstone of the ocean simulation. It makes it fast enough
  * to reach real-time performance. Each instance can process textures of a specific size.
  */
 export class IFFT {
-    private readonly engine: Engine;
+    private readonly engine: WebGPUEngine;
 
     private readonly textureSize: number;
 
@@ -30,7 +30,7 @@ export class IFFT {
 
     private readonly copyComputeShader: CopyComputeShader;
 
-    constructor(engine: Engine, textureSize: number) {
+    constructor(engine: WebGPUEngine, textureSize: number) {
         this.engine = engine;
         this.textureSize = textureSize;
 

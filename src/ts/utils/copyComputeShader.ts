@@ -1,14 +1,13 @@
 import { ComputeShader } from "@babylonjs/core/Compute/computeShader";
-import { Engine } from "@babylonjs/core/Engines/engine";
 import { UniformBuffer } from "@babylonjs/core/Materials/uniformBuffer";
 import { BaseTexture } from "@babylonjs/core/Materials/Textures/baseTexture";
-
 import copyTexture2 from "../../shaders/copyTexture2.wgsl";
+import { WebGPUEngine } from "@babylonjs/core/Engines/webgpuEngine";
 
 export class CopyComputeShader {
     readonly computeShader: ComputeShader;
     private readonly params: UniformBuffer;
-    constructor(engine: Engine) {
+    constructor(engine: WebGPUEngine) {
         this.computeShader = new ComputeShader(
             `copyTextureCompute`,
             engine,

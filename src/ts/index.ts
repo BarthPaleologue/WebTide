@@ -28,8 +28,7 @@ canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
 if (!(await WebGPUEngine.IsSupportedAsync)) {
-    alert(
-        "WebGPU is not supported in your browser. Please check the compatibility here: https://github.com/gpuweb/gpuweb/wiki/Implementation-Status#implementation-status");
+    alert("WebGPU is not supported in your browser. Please check the compatibility here: https://github.com/gpuweb/gpuweb/wiki/Implementation-Status#implementation-status");
 }
 
 const engine = new WebGPUEngine(canvas, { antialias: true });
@@ -53,7 +52,7 @@ const tileSize = 10;
 
 const depthRenderer = scene.enableDepthRenderer(camera, false, true);
 const initialSpectrum = new PhillipsSpectrum(textureSize, tileSize, engine);
-const waterMaterial = new WaterMaterial("waterMaterial", initialSpectrum, scene);
+const waterMaterial = new WaterMaterial("waterMaterial", initialSpectrum, scene, engine);
 
 /*const oceanPlanetMaterial = new OceanPlanetMaterial("oceanPlanet", initialSpectrum, scene);
 const planetRadius = 2;

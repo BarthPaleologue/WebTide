@@ -4,9 +4,9 @@ import { ComputeShader } from "@babylonjs/core/Compute/computeShader";
 import { UniformBuffer } from "@babylonjs/core/Materials/uniformBuffer";
 import { Constants } from "@babylonjs/core/Engines/constants";
 import { InitialSpectrum } from "./initialSpectrum";
+import { WebGPUEngine } from "@babylonjs/core/Engines/webgpuEngine";
 
 import spectrumWGSL from "../../shaders/dynamicSpectrum.wgsl";
-import { Engine } from "@babylonjs/core/Engines/engine";
 
 export class DynamicSpectrum {
     private initialSpectrum: InitialSpectrum;
@@ -19,7 +19,7 @@ export class DynamicSpectrum {
 
     private readonly settings: UniformBuffer;
 
-    constructor(initialSpectrum: InitialSpectrum, engine: Engine) {
+    constructor(initialSpectrum: InitialSpectrum, engine: WebGPUEngine) {
         this.initialSpectrum = initialSpectrum;
 
         this.computeShader = new ComputeShader(
